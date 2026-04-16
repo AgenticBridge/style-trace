@@ -1,0 +1,31 @@
+{
+  "name": "style-trace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Playwright-based MCP server that extracts evidence-first website style signals.",
+  "type": "module",
+  "bin": {
+    "style-trace": "dist/src/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --test --import tsx test/**/*.test.ts",
+    "test:mcp-cli": "bash scripts/test-mcp-cli.sh",
+    "start": "node dist/src/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "playwright": "^1.59.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  }
+}
