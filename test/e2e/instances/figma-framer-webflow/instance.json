@@ -1,0 +1,11 @@
+{
+  "label": "Figma + Framer + Webflow review set",
+  "urls": [
+    "https://www.figma.com/",
+    "https://www.framer.com/",
+    "https://webflow.com/"
+  ],
+  "maxPagesPerSite": 3,
+  "synthesisMode": "cross-site-commonality",
+  "outputFormat": "json+markdown"
+}
