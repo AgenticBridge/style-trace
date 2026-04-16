@@ -57,6 +57,7 @@ npm run build
 npm run typecheck
 npm test
 npm run test:mcp-cli
+npm run test:e2e -- --instance figma-framer-webflow
 npm start
 ```
 
@@ -90,7 +91,30 @@ Or pass your own public URLs:
 bash scripts/test-mcp-cli.sh https://www.apple.com/ca/store https://store.google.com/category/phones?hl=en-GB&pli=1
 ```
 
-The script builds the server, invokes `analyze_website_style` over the real stdio MCP transport, and prints the returned JSON.
+The script builds the server, invokes `analyze_website_style` over the real stdio MCP transport, writes the full MCP payload to `.tmp/mcp-payload-<timestamp>.json`, and prints that file path.
+
+## Review-oriented E2E run
+
+Run a full review workflow against a committed instance:
+
+```bash
+npm run test:e2e -- --instance figma-framer-webflow
+```
+
+This flow:
+
+- calls the MCP and saves the payload into the instance artifact folder
+- screenshots every analyzed source page with Playwright
+- spawns a fresh `opencode` run to regenerate a standalone HTML page from the MCP payload
+- saves that HTML and a screenshot of the regenerated result
+
+Artifacts are written under:
+
+```bash
+test/e2e/instances/<instance>/artifacts/<timestamp>/
+```
+
+You can review `manifest.json`, `mcp-result.json`, `regenerated.html`, and the saved screenshots manually.
 
 ## Notes
 
