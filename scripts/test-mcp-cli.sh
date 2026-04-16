@@ -18,8 +18,13 @@ fi
 NODE_BIN="$(command -v node)"
 SERVER_ENTRY="$ROOT_DIR/dist/src/index.js"
 URLS_JSON="$($NODE_BIN -e 'console.log(JSON.stringify(process.argv.slice(1)))' "${URLS[@]}")"
+OUTPUT_DIR="$ROOT_DIR/.tmp"
+TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
+OUTPUT_PATH="${STYLE_TRACE_OUTPUT_PATH:-$OUTPUT_DIR/mcp-payload-$TIMESTAMP.json}"
+MAX_PAGES="${STYLE_TRACE_MAX_PAGES:-5}"
 
 npm run build >/dev/null
+mkdir -p "$OUTPUT_DIR"
 
 npm exec --yes @modelcontextprotocol/inspector -- --cli --transport stdio \
   "$NODE_BIN" \
@@ -27,6 +32,9 @@ npm exec --yes @modelcontextprotocol/inspector -- --cli --transport stdio \
   --method tools/call \
   --tool-name analyze_website_style \
   --tool-arg "urls=$URLS_JSON" \
-  --tool-arg maxPagesPerSite=5 \
+  --tool-arg "maxPagesPerSite=$MAX_PAGES" \
   --tool-arg synthesisMode=cross-site-commonality \
-  --tool-arg outputFormat=json+markdown
+  --tool-arg outputFormat=json+markdown \
+  > "$OUTPUT_PATH"
+
+printf '%s\n' "$OUTPUT_PATH"

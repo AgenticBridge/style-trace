@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --test --import tsx test/**/*.test.ts",
     "test:mcp-cli": "bash scripts/test-mcp-cli.sh",
+    "test:e2e": "tsx test/e2e/runReview.ts",
     "start": "node dist/src/index.js",
     "dev": "tsx src/index.ts"
   },

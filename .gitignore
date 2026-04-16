@@ -1,3 +1,5 @@
 node_modules/
 dist/
 .playwright-mcp/
+.tmp/
+test/e2e/instances/*/artifacts/
