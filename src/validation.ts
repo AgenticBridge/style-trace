@@ -16,7 +16,6 @@ export function normalizeInput(input: InputPayload): NormalizedInput {
     maxPagesPerSite: input.maxPagesPerSite ?? 4,
     pageSelectionMode: input.pageSelectionMode ?? "auto",
     synthesisMode,
-    outputFormat: input.outputFormat ?? "json+markdown",
   };
 }
 

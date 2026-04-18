@@ -1,123 +1,129 @@
 # StyleTrace
 
-StyleTrace is a compact TypeScript/Node MCP server that analyzes one or more public website homepages with Playwright and returns an evidence-first style profile.
+![Node >=20](https://img.shields.io/badge/node-%3E%3D20-339933)
+![TypeScript](https://img.shields.io/badge/built%20with-TypeScript-3178C6)
+![Playwright](https://img.shields.io/badge/browser-Playwright-45BA4B)
+![MCP](https://img.shields.io/badge/protocol-MCP-6f42c1)
 
-## What it exposes
+StyleTrace is an MCP server that analyzes public marketing websites and turns them into a short style summary you can reuse.
 
-- exactly one MCP tool: `analyze_website_style`
-- stdio transport only
-- structured JSON output for agents
-- short Markdown summary for humans
+![StyleTrace hero preview](docs/promo/style-trace-hero.png)
 
-## Input shape
+## Why use it
 
-```ts
-analyze_website_style({
-  urls: string[],
-  maxPagesPerSite?: number, // total pages per site including homepage, capped at 5
-  pageSelectionMode?: "auto" | "homepage-only",
-  synthesisMode?: "single-site-profile" | "cross-site-commonality",
-  outputFormat?: "json" | "json+markdown"
-})
-```
+- compare a few reference sites and see what they really share
+- turn vague style references into a structured result
+- give a downstream agent or reviewer something clear to work from
+- keep the output small and focused
 
-## MVP analysis scope
+## Installation
 
-The server keeps the extraction narrow and evidence-first:
+Requirements:
 
-- homepage + up to 4 high-signal internal pages
-- nav/link structure
-- button / CTA presence
-- background mode guess
-- accent restraint heuristics
-- basic typography signals
-- page ordering hints such as hero, proof, features, pricing, CTA
+- Node.js `>=20`
+- Chromium for Playwright
 
-## Output highlights
-
-The JSON response stays compact and now includes:
-
-- a human-readable `styleProfile`
-- a small `styleProfile.reproduction` block for downstream implementation cues
-- slim per-page `evidence.pageSignals` with page intent, primary CTA pattern, and top sections
-
-It does **not** return raw heading/action/link arrays in the MCP output.
-
-## Setup
+Setup:
 
 ```bash
 npm install
 npx playwright install chromium
+npm run build
 ```
 
-## Scripts
+## Usage
+
+Connect it from your MCP client:
+
+From a local clone:
+
+```json
+{
+  "mcpServers": {
+    "style-trace": {
+      "command": "node",
+      "args": ["/absolute/path/to/style-trace/dist/src/index.js"]
+    }
+  }
+}
+```
+
+If published to npm, users can run it directly via `npx`:
+
+```json
+{
+  "mcpServers": {
+    "style-trace": {
+      "command": "npx",
+      "args": ["-y", "style-trace"]
+    }
+  }
+}
+```
+
+They still need Playwright Chromium installed once on the machine:
 
 ```bash
-npm run build
-npm run typecheck
-npm test
-npm run test:mcp-cli
-npm run test:e2e -- --instance figma-framer-webflow
+npx playwright install chromium
+```
+
+Or start the built server directly:
+
+```bash
 npm start
 ```
 
-`npm start` runs the built MCP server over stdio, so keep stdout reserved for protocol traffic.
+## How it works
 
-## Local development
+StyleTrace visits a homepage and a few important internal pages with Playwright. It looks for repeated style patterns such as layout, CTA treatment, proof sections, pricing cues, and tone. Then it returns a compact JSON result, with an optional markdown summary.
 
-```bash
-npm run dev
-```
+It exposes one MCP tool: `analyze_website_style`.
 
-## Example MCP server entry
+## What you get
 
-After building, the server entrypoint is:
+The result includes:
 
-```bash
-node dist/src/index.js
-```
+- analyzed pages per site
+- a style profile
+- evidence for the main signals
+- shared patterns across sites
+- guideline rules
+- an optional markdown summary
 
-## Repeatable MCP CLI test
+## Limits
 
-Run the built server through MCP Inspector CLI with the default Apple + Pixel cross-site case:
+- public `http` and `https` URLs only
+- no auth flows or private-network targets
+- max 5 analyzed pages per site
+- stdio transport only
+- no persistence, queues, or web UI
+
+## Verification
+
+Fast local check:
 
 ```bash
 npm run test:mcp-cli
 ```
 
-Or pass your own public URLs:
+Or run it on your own public URLs:
 
 ```bash
 bash scripts/test-mcp-cli.sh https://www.apple.com/ca/store https://store.google.com/category/phones?hl=en-GB&pli=1
 ```
 
-The script builds the server, invokes `analyze_website_style` over the real stdio MCP transport, writes the full MCP payload to `.tmp/mcp-payload-<timestamp>.json`, and prints that file path.
+## Contributing
 
-## Review-oriented E2E run
+Contributions are welcome. Keep the project narrow, evidence-first, and easy to review.
 
-Run a full review workflow against a committed instance:
-
-```bash
-npm run test:e2e -- --instance figma-framer-webflow
-```
-
-This flow:
-
-- calls the MCP and saves the payload into the instance artifact folder
-- screenshots every analyzed source page with Playwright
-- spawns a fresh `opencode` run to regenerate a standalone HTML page from the MCP payload
-- saves that HTML and a screenshot of the regenerated result
-
-Artifacts are written under:
+Before opening a pull request, run:
 
 ```bash
-test/e2e/instances/<instance>/artifacts/<timestamp>/
+npm run typecheck
+npm run build
+npm test
 ```
 
-You can review `manifest.json`, `mcp-result.json`, `regenerated.html`, and the saved screenshots manually.
+## License
 
-## Notes
-
-- only public `http`/`https` URLs are accepted
-- no auth, persistence, queueing, or web server is included
-- no manual sleeps are used; Playwright auto-wait plus explicit load-state waits handle synchronization
+This repository does not currently include a license file.

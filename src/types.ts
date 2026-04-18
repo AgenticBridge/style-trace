@@ -1,6 +1,5 @@
 export type PageSelectionMode = "auto" | "homepage-only";
 export type SynthesisMode = "single-site-profile" | "cross-site-commonality";
-export type OutputFormat = "json" | "json+markdown";
 export type Confidence = "high" | "medium" | "low";
 export type BackgroundMode = "light" | "dark" | "mixed";
 export type ContrastTendency = "high" | "medium" | "low";
@@ -32,7 +31,6 @@ export interface NormalizedInput {
   maxPagesPerSite: number;
   pageSelectionMode: PageSelectionMode;
   synthesisMode: SynthesisMode;
-  outputFormat: OutputFormat;
 }
 
 export interface PageSnapshot {
@@ -96,11 +94,11 @@ export interface PageSnapshot {
   widthSamples: number[];
 }
 
-export interface PageSignals {
+export interface PageEvidence {
   path: string;
-  sections: string[];
+  sectionOrder: string[];
   intent: PageIntent;
-  primaryCtaPattern: HeroCtaPattern;
+  heroCtaPattern: HeroCtaPattern;
 }
 
 export interface SiteStyleProfile {
@@ -158,23 +156,8 @@ export interface SiteStyleProfile {
 export interface SiteProfile {
   url: string;
   pagesAnalyzed: string[];
+  pageEvidence: PageEvidence[];
   styleProfile: SiteStyleProfile;
-  evidence: {
-    analyzedPageCount: number;
-    pageSignals: PageSignals[];
-    reproductionBasis: {
-      headerNavLinkCount: number;
-      headerPrimaryCtaCount: number;
-      headerActionCount: number;
-      heroPaths: string[];
-      heroPrimaryCtaCount: number;
-      heroHeadingMaxSize: number;
-      heroMediaPaths: string[];
-      cardPaths: string[];
-      pricingPaths: string[];
-      proofPaths: string[];
-    };
-  };
 }
 
 export interface GuidelineRule {
@@ -199,5 +182,4 @@ export interface StyleTraceResult {
       reason: string;
     }>;
   };
-  markdownSummary?: string;
 }

@@ -34,7 +34,6 @@ npm exec --yes @modelcontextprotocol/inspector -- --cli --transport stdio \
   --tool-arg "urls=$URLS_JSON" \
   --tool-arg "maxPagesPerSite=$MAX_PAGES" \
   --tool-arg synthesisMode=cross-site-commonality \
-  --tool-arg outputFormat=json+markdown \
   > "$OUTPUT_PATH"
 
 printf '%s\n' "$OUTPUT_PATH"

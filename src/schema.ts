@@ -9,28 +9,13 @@ export const inputSchema = z.object({
     .describe("Use 'auto' to analyze the homepage plus selected internal pages, or 'homepage-only' to analyze only the homepage."),
   synthesisMode: z.enum(["single-site-profile", "cross-site-commonality"]).optional()
     .describe("Override synthesis behavior. Defaults to single-site-profile for 1 URL and cross-site-commonality for 2+ URLs."),
-  outputFormat: z.enum(["json", "json+markdown"]).optional()
-    .describe("Return structured JSON only, or JSON plus a short Markdown summary."),
 });
 
-const pageSignalsSchema = z.object({
+const pageEvidenceSchema = z.object({
   path: z.string(),
-  sections: z.array(z.string()),
+  sectionOrder: z.array(z.string()),
   intent: z.enum(["home", "pricing", "product", "company", "proof", "other"]),
-  primaryCtaPattern: z.enum(["none", "single-primary", "dual-cta", "repeated"]),
-});
-
-const reproductionBasisSchema = z.object({
-  headerNavLinkCount: z.number().int().nonnegative(),
-  headerPrimaryCtaCount: z.number().int().nonnegative(),
-  headerActionCount: z.number().int().nonnegative(),
-  heroPaths: z.array(z.string()),
-  heroPrimaryCtaCount: z.number().int().nonnegative(),
-  heroHeadingMaxSize: z.number().nonnegative(),
-  heroMediaPaths: z.array(z.string()),
-  cardPaths: z.array(z.string()),
-  pricingPaths: z.array(z.string()),
-  proofPaths: z.array(z.string()),
+  heroCtaPattern: z.enum(["none", "single-primary", "dual-cta", "repeated"]),
 });
 
 export const outputSchema = z.object({
@@ -38,6 +23,7 @@ export const outputSchema = z.object({
     z.object({
       url: z.url(),
       pagesAnalyzed: z.array(z.string()),
+      pageEvidence: z.array(pageEvidenceSchema),
       styleProfile: z.object({
         tone: z.array(z.string()),
         colors: z.object({
@@ -89,11 +75,6 @@ export const outputSchema = z.object({
           }),
         }),
       }),
-      evidence: z.object({
-        analyzedPageCount: z.number().int().positive(),
-        pageSignals: z.array(pageSignalsSchema),
-        reproductionBasis: reproductionBasisSchema,
-      }),
     }),
   ),
   observedCommonalities: z.object({
@@ -117,7 +98,6 @@ export const outputSchema = z.object({
       }),
     ),
   }),
-  markdownSummary: z.string().optional(),
 });
 
 export type InputPayload = z.infer<typeof inputSchema>;

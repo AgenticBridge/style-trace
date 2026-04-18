@@ -1,9 +1,12 @@
 {
-  "name": "style-trace",
+  "name": "@agenticbridge/style-trace",
   "version": "0.1.0",
-  "private": true,
   "description": "Playwright-based MCP server that extracts evidence-first website style signals.",
   "type": "module",
+  "files": [
+    "dist/src/",
+    "README.md"
+  ],
   "bin": {
     "style-trace": "dist/src/index.js"
   },
@@ -13,8 +16,10 @@
     "test": "node --test --import tsx test/**/*.test.ts",
     "test:mcp-cli": "bash scripts/test-mcp-cli.sh",
     "test:e2e": "tsx test/e2e/runReview.ts",
+    "promo:artifact": "tsx scripts/generate-promo-artifact.ts",
     "start": "node dist/src/index.js",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "prepack": "npm run build"
   },
   "engines": {
     "node": ">=20"
@@ -28,5 +33,29 @@
     "@types/node": "^25.6.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
-  }
+  },
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AgenticBridge/style-trace.git"
+  },
+  "keywords": [
+    "mcp",
+    "node",
+    "website",
+    "reverse-engineering",
+    "style",
+    "agent",
+    "web"
+  ],
+  "author": "agentic-bridge",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AgenticBridge/style-trace/issues"
+  },
+  "homepage": "https://github.com/AgenticBridge/style-trace#readme"
 }

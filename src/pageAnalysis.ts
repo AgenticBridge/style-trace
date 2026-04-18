@@ -8,7 +8,7 @@ import type {
   HeaderCtaPattern,
   HeroCtaPattern,
   NavDensity,
-  PageSignals,
+  PageEvidence,
   PageSnapshot,
   PricingPresence,
   ProofPresence,
@@ -250,19 +250,7 @@ export async function capturePageSnapshot(page: Page): Promise<PageSnapshot> {
 
 export function buildSiteStyleProfile(snapshots: PageSnapshot[]): {
   styleProfile: SiteStyleProfile;
-  pageSignals: PageSignals[];
-  reproductionBasis: {
-    headerNavLinkCount: number;
-    headerPrimaryCtaCount: number;
-    headerActionCount: number;
-    heroPaths: string[];
-    heroPrimaryCtaCount: number;
-    heroHeadingMaxSize: number;
-    heroMediaPaths: string[];
-    cardPaths: string[];
-    pricingPaths: string[];
-    proofPaths: string[];
-  };
+  pageEvidence: PageEvidence[];
 } {
   const backgroundModes = snapshots.map((snapshot) => guessBackgroundMode(snapshot.bodyBackgroundColor));
   const contrastLevels = snapshots.map((snapshot) => guessContrast(snapshot.bodyBackgroundColor, snapshot.bodyTextColor));
@@ -290,7 +278,6 @@ export function buildSiteStyleProfile(snapshots: PageSnapshot[]): {
   const footerSummary = summarizeFooter(snapshots);
   const navDensity = summarizeNavDensity(snapshots);
   const headerCtaPattern = summarizeHeaderCtaPattern(primaryActionStats);
-  const headerActionCount = summarizeHeaderActionCount(snapshots);
   const heroHeadingScale = summarizeHeroHeadingScale(scaleRatio);
   const heroCtaPattern = summarizeHeroCtaPattern(primaryActionStats);
   const heroMediaStyle = summarizeHeroMediaStyle(snapshots);
@@ -313,17 +300,12 @@ export function buildSiteStyleProfile(snapshots: PageSnapshot[]): {
     headingFamily: mostCommon(headingFamilies) ?? mostCommon(bodyFamilies) ?? "sans",
   });
 
-  const pageSignals = snapshots.map((snapshot, index) => ({
+  const pageEvidence = snapshots.map((snapshot, index) => ({
     path: snapshot.path || (index === 0 ? "/" : new URL(snapshot.url).pathname || "/"),
-    sections: (sectionOrders[index] ?? []).slice(0, 4),
+    sectionOrder: (sectionOrders[index] ?? []).slice(0, 4),
     intent: classifyPageIntent(snapshot, index),
-    primaryCtaPattern: primaryActionStats[index]?.heroCtaPattern ?? "none",
+    heroCtaPattern: primaryActionStats[index]?.heroCtaPattern ?? "none",
   }));
-  const heroPaths = pageSignals.filter((signal) => signal.sections.includes("hero")).map((signal) => signal.path).slice(0, 3);
-  const heroMediaPaths = pageSignals.filter((signal, index) => hasMediaHeavyHero(snapshots[index]!)).map((signal) => signal.path).slice(0, 3);
-  const cardPaths = pageSignals.filter((signal, index) => hasCardHeavySections(snapshots[index]!)).map((signal) => signal.path).slice(0, 4);
-  const pricingPaths = pageSignals.filter((signal) => signal.intent === "pricing" || signal.sections.includes("pricing")).map((signal) => signal.path).slice(0, 4);
-  const proofPaths = pageSignals.filter((signal) => signal.intent === "proof" || signal.sections.includes("proof")).map((signal) => signal.path).slice(0, 4);
 
   return {
     styleProfile: {
@@ -377,20 +359,8 @@ export function buildSiteStyleProfile(snapshots: PageSnapshot[]): {
         },
       },
     },
-    pageSignals,
-    reproductionBasis: {
-      headerNavLinkCount: Math.round(average(snapshots.map((snapshot) => snapshot.navLinkTexts.length))),
-      headerPrimaryCtaCount: Math.round(average(primaryActionStats.map((item) => item.headerPrimaryCount))),
-      headerActionCount,
-      heroPaths,
-      heroPrimaryCtaCount: Math.round(average(primaryActionStats.map((item) => item.heroPrimaryCount))),
-      heroHeadingMaxSize: Math.round(average(snapshots.map((snapshot) => getHeroHeadingSize(snapshot)))),
-      heroMediaPaths,
-      cardPaths,
-      pricingPaths,
-      proofPaths,
-    },
-  };
+      pageEvidence,
+    };
 }
 
 function collectAccentBuckets(snapshot: PageSnapshot): string[] {
@@ -435,10 +405,6 @@ function summarizeButtons(stats: PageSnapshot) {
     size: classifyButtonSize(avgPaddingX, avgPaddingY),
     heroCtaPattern,
   };
-}
-
-function summarizeHeaderActionCount(snapshots: PageSnapshot[]): number {
-  return Math.round(average(snapshots.map((snapshot) => snapshot.actions.filter(isLikelyHeaderAction).length)));
 }
 
 function summarizeNavDensity(snapshots: PageSnapshot[]): NavDensity {
@@ -537,7 +503,7 @@ function summarizeProofPresence(snapshots: PageSnapshot[]): ProofPresence {
 
 function summarizeNavigation(snapshots: PageSnapshot[], primaryCounts: number[]): string {
   const navLinkCount = Math.round(average(snapshots.map((snapshot) => snapshot.navLinkTexts.length)));
-  const headerActionCount = summarizeHeaderActionCount(snapshots);
+  const headerActionCount = Math.round(average(snapshots.map((snapshot) => snapshot.actions.filter(isLikelyHeaderAction).length)));
   const primaryCtas = Math.round(average(primaryCounts));
   const ctaLabel = primaryCtas <= 1 ? "single primary CTA" : "multiple primary CTAs";
   const densityLabel = navLinkCount <= 5 ? "simple top nav" : "expanded top nav";

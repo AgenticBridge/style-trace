@@ -2,7 +2,6 @@ import { chromium } from "playwright";
 import type { InputPayload } from "./schema.js";
 import { buildSiteStyleProfile, capturePageSnapshot, dismissConsentOverlays } from "./pageAnalysis.js";
 import { discoverInternalPages } from "./pageDiscovery.js";
-import { renderMarkdownSummary } from "./markdown.js";
 import { synthesizeResult } from "./synthesis.js";
 import type { SiteProfile, StyleTraceResult } from "./types.js";
 import { normalizeInput } from "./validation.js";
@@ -17,12 +16,7 @@ export async function analyzeWebsiteStyle(input: InputPayload): Promise<StyleTra
       sites.push(await analyzeSite(browser, url, normalized.maxPagesPerSite, normalized.pageSelectionMode));
     }
 
-    const result = synthesizeResult(sites, normalized.synthesisMode);
-    if (normalized.outputFormat === "json+markdown") {
-      result.markdownSummary = renderMarkdownSummary(result);
-    }
-
-    return result;
+    return synthesizeResult(sites, normalized.synthesisMode);
   } finally {
     await browser.close();
   }
@@ -60,17 +54,13 @@ async function analyzeSite(
       }
     }
 
-    const { styleProfile, pageSignals, reproductionBasis } = buildSiteStyleProfile(snapshots);
+    const { styleProfile, pageEvidence } = buildSiteStyleProfile(snapshots);
 
     return {
       url,
       pagesAnalyzed: snapshots.map((snapshot) => snapshot.path || new URL(snapshot.url).pathname || "/"),
+      pageEvidence,
       styleProfile,
-      evidence: {
-        analyzedPageCount: snapshots.length,
-        pageSignals,
-        reproductionBasis,
-      },
     };
   } finally {
     await context.close();

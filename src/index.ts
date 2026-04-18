@@ -25,7 +25,7 @@ server.registerTool(
   async (args) => {
     try {
       const result = await analyzeWebsiteStyle(args);
-      const text = result.markdownSummary ?? JSON.stringify(result, null, 2);
+      const text = `StyleTrace result ready in structuredContent for ${result.sites.length} site(s).`;
 
       return {
         content: [{ type: "text", text }],

@@ -6,6 +6,5 @@
     "https://webflow.com/"
   ],
   "maxPagesPerSite": 3,
-  "synthesisMode": "cross-site-commonality",
-  "outputFormat": "json+markdown"
+  "synthesisMode": "cross-site-commonality"
 }

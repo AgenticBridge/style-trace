@@ -3,3 +3,10 @@ dist/
 .playwright-mcp/
 .tmp/
 test/e2e/instances/*/artifacts/
+AGENTS.md
+docs/PRD.md
+docs/brainstorming-summary.md
+docs/local-search-instruction.md
+docs/promo/.video-temp/
+.env
+*.tgz

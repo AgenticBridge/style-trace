@@ -40,18 +40,13 @@ const snapshot: PageSnapshot = {
 test("buildSiteStyleProfile emits compact provenance for reproduction cues", () => {
   const result = buildSiteStyleProfile([snapshot]);
 
-  assert.deepEqual(result.pageSignals[0]?.sections, ["hero", "cta", "proof", "pricing"]);
+  assert.deepEqual(result.pageEvidence[0]?.sectionOrder, ["hero", "cta", "proof", "pricing"]);
+  assert.equal(result.pageEvidence[0]?.intent, "home");
+  assert.equal(result.pageEvidence[0]?.heroCtaPattern, "dual-cta");
   assert.equal(result.styleProfile.reproduction.hero.ctaPattern, "dual-cta");
   assert.equal(result.styleProfile.reproduction.hero.mediaStyle, "immersive-media");
   assert.equal(result.styleProfile.reproduction.hero.proofNearTop, true);
   assert.equal(result.styleProfile.reproduction.commerce.pricingPresence, "section+page");
   assert.match(result.styleProfile.components.cards, /pricing|cards|proof/i);
   assert.match(result.styleProfile.components.proof, /proof|testimonial|logo/i);
-  assert.deepEqual(result.reproductionBasis.heroPaths, ["/"]);
-  assert.deepEqual(result.reproductionBasis.heroMediaPaths, ["/"]);
-  assert.deepEqual(result.reproductionBasis.cardPaths, ["/"]);
-  assert.deepEqual(result.reproductionBasis.pricingPaths, ["/"]);
-  assert.deepEqual(result.reproductionBasis.proofPaths, ["/"]);
-  assert.equal(result.reproductionBasis.heroPrimaryCtaCount, 2);
-  assert.equal(result.reproductionBasis.heroHeadingMaxSize, 64);
 });

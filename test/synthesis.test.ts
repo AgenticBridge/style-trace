@@ -6,6 +6,7 @@ import type { SiteProfile } from "../src/types.js";
 const siteA: SiteProfile = {
   url: "https://alpha.example",
   pagesAnalyzed: ["/"],
+  pageEvidence: [{ path: "/", sectionOrder: ["hero", "proof", "features", "cta"], intent: "home", heroCtaPattern: "single-primary" }],
   styleProfile: {
     tone: ["minimal", "technical"],
     colors: {
@@ -57,27 +58,12 @@ const siteA: SiteProfile = {
       },
     },
   },
-  evidence: {
-    analyzedPageCount: 1,
-    pageSignals: [{ path: "/", sections: ["hero", "proof", "features", "cta"], intent: "home", primaryCtaPattern: "single-primary" }],
-    reproductionBasis: {
-      headerNavLinkCount: 4,
-      headerPrimaryCtaCount: 1,
-      headerActionCount: 2,
-      heroPaths: ["/"],
-      heroPrimaryCtaCount: 1,
-      heroHeadingMaxSize: 64,
-      heroMediaPaths: ["/"],
-      cardPaths: ["/pricing"],
-      pricingPaths: ["/pricing"],
-      proofPaths: ["/customers"],
-    },
-  },
 };
 
 const siteB: SiteProfile = {
   url: "https://beta.example",
   pagesAnalyzed: ["/"],
+  pageEvidence: [{ path: "/", sectionOrder: ["hero", "pricing"], intent: "pricing", heroCtaPattern: "none" }],
   styleProfile: {
     tone: ["playful"],
     colors: {
@@ -127,22 +113,6 @@ const siteB: SiteProfile = {
         pricingPresence: "page",
         proofPresence: "none",
       },
-    },
-  },
-  evidence: {
-    analyzedPageCount: 1,
-    pageSignals: [{ path: "/", sections: ["hero", "pricing"], intent: "pricing", primaryCtaPattern: "none" }],
-    reproductionBasis: {
-      headerNavLinkCount: 8,
-      headerPrimaryCtaCount: 0,
-      headerActionCount: 3,
-      heroPaths: ["/"],
-      heroPrimaryCtaCount: 0,
-      heroHeadingMaxSize: 40,
-      heroMediaPaths: [],
-      cardPaths: ["/pricing"],
-      pricingPaths: ["/pricing"],
-      proofPaths: [],
     },
   },
 };

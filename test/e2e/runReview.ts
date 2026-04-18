@@ -10,7 +10,6 @@ interface ReviewInstance {
   urls: string[];
   maxPagesPerSite?: number;
   synthesisMode?: "single-site-profile" | "cross-site-commonality";
-  outputFormat?: "json" | "json+markdown";
 }
 
 interface InspectorPayload {

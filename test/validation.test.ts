@@ -16,7 +16,6 @@ test("normalizeInput applies defaults and deduplicates URLs", () => {
   assert.equal(normalized.maxPagesPerSite, 4);
   assert.equal(normalized.pageSelectionMode, "auto");
   assert.equal(normalized.synthesisMode, "single-site-profile");
-  assert.equal(normalized.outputFormat, "json+markdown");
 });
 
 test("inputSchema accepts maxPagesPerSite up to 5", () => {
