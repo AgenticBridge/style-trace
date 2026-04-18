@@ -1,5 +1,5 @@
 import type { InputPayload } from "./schema.js";
-import type { NormalizedInput, SynthesisMode } from "./types.js";
+import type { EvidenceMode, NormalizedInput, SynthesisMode } from "./types.js";
 
 const localHostnames = new Set(["localhost", "0.0.0.0", "127.0.0.1", "::1"]);
 
@@ -13,9 +13,8 @@ export function normalizeInput(input: InputPayload): NormalizedInput {
 
   return {
     urls,
-    maxPagesPerSite: input.maxPagesPerSite ?? 4,
-    pageSelectionMode: input.pageSelectionMode ?? "auto",
     synthesisMode,
+    evidenceMode: resolveEvidenceMode(input.evidenceMode),
   };
 }
 
@@ -25,6 +24,10 @@ function resolveSynthesisMode(urlCount: number, override: SynthesisMode | undefi
   }
 
   return override;
+}
+
+function resolveEvidenceMode(override: EvidenceMode | undefined): EvidenceMode {
+  return override ?? "omit";
 }
 
 export function normalizePublicUrl(rawValue: string): string {

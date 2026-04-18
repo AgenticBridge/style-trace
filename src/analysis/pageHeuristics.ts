@@ -1,20 +1,20 @@
-import type { Page } from "playwright";
+import { buildCapturedPages } from "./moduleSegmentation.js";
 import type {
   BackgroundMode,
   ButtonEmphasis,
   ButtonRadius,
   ButtonSize,
   ContrastTendency,
+  DerivedDesignSignals,
   HeaderCtaPattern,
   HeroCtaPattern,
   NavDensity,
   PageEvidence,
   PageSnapshot,
   PricingPresence,
-  ProofPresence,
-  SiteStyleProfile,
-  Tone,
-} from "./types.js";
+  SiteDesignGrammar,
+} from "../core/types.js";
+import { buildDesignGrammar } from "./visualGrammar.js";
 
 interface RgbColor {
   r: number;
@@ -23,234 +23,10 @@ interface RgbColor {
   a: number;
 }
 
-export async function dismissConsentOverlays(page: Page): Promise<void> {
-  const selectors = [
-    "button:has-text('Accept')",
-    "button:has-text('Accept all')",
-    "button:has-text('I agree')",
-    "button:has-text('Got it')",
-    "button:has-text('Allow all')",
-  ];
-
-  for (const selector of selectors) {
-    const button = page.locator(selector).first();
-    try {
-      if (await button.isVisible({ timeout: 400 })) {
-        await button.click({ timeout: 1000 });
-        return;
-      }
-    } catch {
-      continue;
-    }
-  }
-}
-
-export async function capturePageSnapshot(page: Page): Promise<PageSnapshot> {
-  return page.evaluate(() => {
-    const bodyStyle = getComputedStyle(document.body);
-    const toNumber = (value: string) => Number.parseFloat(value) || 0;
-    const clampText = (value: string) => value.trim().replace(/\s+/g, " ").slice(0, 160);
-    const viewportHeight = window.innerHeight;
-
-    const headings = Array.from(document.querySelectorAll("h1, h2, h3")).slice(0, 18).map((element) => {
-      const style = getComputedStyle(element);
-      const rect = element.getBoundingClientRect();
-      return {
-        tagName: element.tagName.toLowerCase(),
-        text: clampText(element.textContent ?? ""),
-        top: Math.max(0, rect.top + window.scrollY),
-        fontSize: toNumber(style.fontSize),
-        fontWeight: Number.parseInt(style.fontWeight, 10) || 400,
-        fontFamily: style.fontFamily,
-      };
-    }).filter((item) => item.text.length > 0);
-
-    const actions = Array.from(document.querySelectorAll("button, a, input[type='button'], input[type='submit']")).slice(0, 28).map((element) => {
-      const target = element as HTMLElement;
-      const style = getComputedStyle(target);
-      const rect = target.getBoundingClientRect();
-      const region: "nav" | "header" | "footer" | "main" | "other" = target.closest("nav")
-        ? "nav"
-        : target.closest("header")
-          ? "header"
-          : target.closest("footer")
-            ? "footer"
-            : target.closest("main")
-              ? "main"
-              : "other";
-      return {
-        tagName: target.tagName.toLowerCase(),
-        text: clampText(target.innerText || target.getAttribute("value") || target.textContent || ""),
-        top: Math.max(0, rect.top + window.scrollY),
-        region,
-        backgroundColor: style.backgroundColor,
-        textColor: style.color,
-        borderColor: style.borderColor,
-        borderRadius: toNumber(style.borderTopLeftRadius),
-        fontWeight: Number.parseInt(style.fontWeight, 10) || 400,
-        paddingX: toNumber(style.paddingLeft) + toNumber(style.paddingRight),
-        paddingY: toNumber(style.paddingTop) + toNumber(style.paddingBottom),
-      };
-    }).filter((item) => item.text.length > 0);
-
-    const internalLinks = Array.from(document.querySelectorAll("a[href]")).slice(0, 120).map((anchor) => {
-      const href = (anchor as HTMLAnchorElement).href;
-      const text = clampText(anchor.textContent ?? "");
-      const region: "nav" | "header" | "footer" | "main" | "other" = anchor.closest("nav")
-        ? "nav"
-        : anchor.closest("header")
-          ? "header"
-          : anchor.closest("footer")
-            ? "footer"
-            : anchor.closest("main")
-              ? "main"
-              : "other";
-
-      return { href, text, region };
-    });
-
-    const navLinkTexts = Array.from(document.querySelectorAll("nav a[href], header a[href]")).map((anchor) => clampText(anchor.textContent ?? "")).filter(Boolean).slice(0, 16);
-    const footerLinkTexts = Array.from(document.querySelectorAll("footer a[href]")).map((anchor) => clampText(anchor.textContent ?? "")).filter(Boolean).slice(0, 20);
-
-    const sectionCandidates = Array.from(document.querySelectorAll("main section, main > div, [data-section], article, [role='region']")).slice(0, 36).flatMap((element) => {
-      const target = element as HTMLElement;
-      const rect = target.getBoundingClientRect();
-      const top = Math.max(0, rect.top + window.scrollY);
-      const height = Math.round(rect.height);
-      if (height < 120 || rect.width < 260) {
-        return [];
-      }
-
-      const text = clampText((target.innerText || target.textContent || "").toLowerCase()).slice(0, 400);
-      if (text.length < 24) {
-        return [];
-      }
-
-      const sectionHeadings = Array.from(target.querySelectorAll("h1, h2, h3")).slice(0, 6).map((heading) => {
-        const headingElement = heading as HTMLElement;
-        const style = getComputedStyle(headingElement);
-        return {
-          tag: heading.tagName.toLowerCase(),
-          text: clampText(headingElement.innerText || headingElement.textContent || ""),
-          size: toNumber(style.fontSize),
-        };
-      }).filter((heading) => heading.text.length > 0);
-
-      const candidateActions = Array.from(target.querySelectorAll("button, a, input[type='button'], input[type='submit']")).slice(0, 12).map((action) => {
-        const actionElement = action as HTMLElement;
-        const style = getComputedStyle(actionElement);
-        return {
-          text: clampText(actionElement.innerText || actionElement.textContent || actionElement.getAttribute("value") || ""),
-          paddingX: toNumber(style.paddingLeft) + toNumber(style.paddingRight),
-          backgroundColor: style.backgroundColor,
-        };
-      }).filter((action) => action.text.length > 0);
-
-      const primaryActionCount = candidateActions.filter((action) => {
-        const color = action.backgroundColor.toLowerCase();
-        return color !== "transparent" && color !== "rgba(0, 0, 0, 0)" && color !== "rgb(0, 0, 0)" && action.paddingX >= 20;
-      }).length;
-
-      const cardCount = Math.max(
-        target.querySelectorAll("li, article, [class*='card'], [class*='tile'], [data-card]").length,
-        Math.round(target.querySelectorAll("img, picture, svg").length / 2),
-      );
-      const mediaElements = Array.from(target.querySelectorAll("img, picture, video, canvas, svg, iframe")).slice(0, 12);
-      const mediaCount = mediaElements.length;
-      const largeMediaCount = mediaElements.filter((media) => {
-        const mediaRect = (media as HTMLElement).getBoundingClientRect();
-        return mediaRect.width >= 280 && mediaRect.height >= 180;
-      }).length;
-      const logoLikeCount = target.querySelectorAll("img[alt*='logo' i], svg[aria-label*='logo' i], [class*='logo'] img").length;
-
-      const labels = new Set<string>();
-      const headingText = sectionHeadings[0]?.text ?? "";
-      const headingTag = sectionHeadings[0]?.tag ?? "div";
-      const headingSize = Math.max(...sectionHeadings.map((heading) => heading.size), 0);
-      const aboveFold = top <= viewportHeight * 1.2;
-
-      if (aboveFold && (headingTag === "h1" || headingSize >= 40 || (sectionHeadings.length > 0 && primaryActionCount >= 1))) {
-        labels.add("hero");
-      }
-
-      if (
-        /trusted|customer|testimonial|review|loved by|case stud|award|recognized|used by|social proof/.test(text)
-        || logoLikeCount >= 3
-      ) {
-        labels.add("proof");
-      }
-
-      if (
-        /pricing|plans|plan|buy|purchase|starting at|per month|per year|from \$/.test(text)
-        || (cardCount >= 3 && /month|year|annual|monthly/.test(text))
-      ) {
-        labels.add("pricing");
-      }
-
-      if (
-        /feature|capabilit|benefit|why |powerful|everything you need|designed to|works with/.test(text)
-        || (cardCount >= 3 && sectionHeadings.length >= 2)
-      ) {
-        labels.add("features");
-      }
-
-      if (
-        /get started|book demo|start free|talk to sales|request demo|buy|shop now|learn more|pre-order/.test(text)
-        || primaryActionCount >= 2
-      ) {
-        labels.add("cta");
-      }
-
-      return [{
-        top,
-        height,
-        headingText,
-        headingTag,
-        headingSize,
-        headingCount: sectionHeadings.length,
-        actionCount: candidateActions.length,
-        primaryActionCount,
-        cardCount,
-        logoLikeCount,
-        mediaCount,
-        largeMediaCount,
-        textLength: text.length,
-        labels: [...labels],
-      }];
-    });
-
-    const sectionHints = sectionCandidates.flatMap((candidate) => candidate.labels.map((label) => ({ label, top: candidate.top })));
-
-    const widthSamples = Array.from(document.querySelectorAll("main section, main > div, header > div, footer > div")).slice(0, 32).map((element) => {
-      const rect = element.getBoundingClientRect();
-      return Math.round(rect.width);
-    }).filter((width) => width > 320);
-
-    return {
-      path: window.location.pathname || "/",
-      url: window.location.href,
-      title: document.title,
-      bodyBackgroundColor: bodyStyle.backgroundColor,
-      bodyTextColor: bodyStyle.color,
-      bodyFontFamily: bodyStyle.fontFamily,
-      bodyFontSize: toNumber(bodyStyle.fontSize),
-      pageHeight: document.documentElement.scrollHeight,
-      textLength: (document.body.innerText || "").replace(/\s+/g, " ").trim().length,
-      navLinkTexts,
-      footerLinkTexts,
-      internalLinks,
-      headings,
-      actions,
-      sectionHints,
-      sectionCandidates,
-      widthSamples,
-    };
-  });
-}
-
-export function buildSiteStyleProfile(snapshots: PageSnapshot[]): {
-  styleProfile: SiteStyleProfile;
+export function buildSiteAnalysisResult(snapshots: PageSnapshot[]): {
   pageEvidence: PageEvidence[];
+  capturedPages: import("../core/types.js").CapturedPage[];
+  designGrammar: SiteDesignGrammar;
 } {
   const backgroundModes = snapshots.map((snapshot) => guessBackgroundMode(snapshot.bodyBackgroundColor));
   const contrastLevels = snapshots.map((snapshot) => guessContrast(snapshot.bodyBackgroundColor, snapshot.bodyTextColor));
@@ -286,81 +62,73 @@ export function buildSiteStyleProfile(snapshots: PageSnapshot[]): {
   const buttonEmphasis = summarizeButtonEmphasis(primaryActionStats);
   const buttonSize = summarizeButtonSize(primaryActionStats);
   const pricingPresence = summarizePricingPresence(snapshots, sectionOrders);
-  const proofPresence = summarizeProofPresence(snapshots);
-  const cardSummary = summarizeCards(snapshots);
-  const pricingBlockSummary = summarizePricingBlocks(snapshots);
-  const proofSummary = summarizeProofBlocks(snapshots);
-
-  const tones = inferTone({
-    accentCount,
-    backgroundMode: mostCommon(backgroundModes) ?? "light",
-    density,
-    navLinkCount: Math.round(average(snapshots.map((snapshot) => snapshot.navLinkTexts.length))),
-    sectionOrder: mergedStructure,
-    headingFamily: mostCommon(headingFamilies) ?? mostCommon(bodyFamilies) ?? "sans",
-  });
-
   const pageEvidence = snapshots.map((snapshot, index) => ({
     path: snapshot.path || (index === 0 ? "/" : new URL(snapshot.url).pathname || "/"),
     sectionOrder: (sectionOrders[index] ?? []).slice(0, 4),
     intent: classifyPageIntent(snapshot, index),
     heroCtaPattern: primaryActionStats[index]?.heroCtaPattern ?? "none",
   }));
+  const capturedPages = buildCapturedPages(snapshots, pageEvidence);
 
-  return {
-    styleProfile: {
-      tone: tones,
-      colors: {
-        backgroundMode: summarizeBackgroundModes(backgroundModes),
-        accentCount,
-        contrast: mostCommon(contrastLevels) ?? "medium",
-        paletteRestraint,
+  const signals: DerivedDesignSignals = {
+    colors: {
+      backgroundMode: summarizeBackgroundModes(backgroundModes),
+      accentCount,
+      contrast: mostCommon(contrastLevels) ?? "medium",
+      paletteRestraint,
+    },
+    typography: {
+      headingStyle: summarizeHeadingStyle(headingSamples, headingFamilies),
+      bodyStyle: summarizeBodyStyle(bodyFamilies),
+      scale: summarizeScale(scaleRatio),
+      families: uniqueStrings([...headingFamilies, ...bodyFamilies]).slice(0, 4),
+    },
+    layout: {
+      density,
+      sectionRhythm,
+      structure: mergedStructure,
+      contentWidth,
+    },
+    components: {
+      nav: navSummary,
+      buttons: buttonSummary,
+      ctaPresence,
+      footer: footerSummary,
+    },
+    reproduction: {
+      header: {
+        navDensity,
+        ctaPattern: headerCtaPattern,
       },
-      typography: {
-        headingStyle: summarizeHeadingStyle(headingSamples, headingFamilies),
-        bodyStyle: summarizeBodyStyle(bodyFamilies),
-        scale: summarizeScale(scaleRatio),
-        families: uniqueStrings([...headingFamilies, ...bodyFamilies]).slice(0, 4),
+      hero: {
+        headingScale: heroHeadingScale,
+        ctaPattern: heroCtaPattern,
+        mediaStyle: heroMediaStyle,
+        proofNearTop,
       },
-      layout: {
-        density,
-        sectionRhythm,
-        structure: mergedStructure,
-        contentWidth,
+      buttons: {
+        radius: buttonRadius,
+        emphasis: buttonEmphasis,
+        size: buttonSize,
       },
-      components: {
-        nav: navSummary,
-        buttons: buttonSummary,
-        ctaPresence,
-        cards: cardSummary,
-        pricingBlocks: pricingBlockSummary,
-        proof: proofSummary,
-        footer: footerSummary,
-      },
-      reproduction: {
-        header: {
-          navDensity,
-          ctaPattern: headerCtaPattern,
-        },
-        hero: {
-          headingScale: heroHeadingScale,
-          ctaPattern: heroCtaPattern,
-          mediaStyle: heroMediaStyle,
-          proofNearTop,
-        },
-        buttons: {
-          radius: buttonRadius,
-          emphasis: buttonEmphasis,
-          size: buttonSize,
-        },
-        commerce: {
-          pricingPresence,
-          proofPresence,
-        },
+      commerce: {
+        pricingPresence,
       },
     },
-      pageEvidence,
-    };
+  };
+
+  const designGrammar = buildDesignGrammar({
+    snapshots,
+    pageEvidence,
+    capturedPages,
+    signals,
+  });
+
+  return {
+    pageEvidence,
+    capturedPages,
+    designGrammar,
+  };
 }
 
 function collectAccentBuckets(snapshot: PageSnapshot): string[] {
@@ -384,9 +152,7 @@ function collectAccentBuckets(snapshot: PageSnapshot): string[] {
 }
 
 function summarizeButtons(stats: PageSnapshot) {
-  const primaryActions = stats.actions.filter((action) => {
-    return isLikelyPrimaryAction(action);
-  });
+  const primaryActions = stats.actions.filter((action) => isLikelyPrimaryAction(action));
   const primaryCount = primaryActions.length;
   const roundedValues = stats.actions.map((action) => action.borderRadius);
   const radiusMedian = median(roundedValues);
@@ -417,11 +183,9 @@ function summarizeHeaderCtaPattern(stats: Array<{ headerPrimaryCount: number }>)
   if (averagePrimary >= 1.5) {
     return "multiple-primary";
   }
-
   if (averagePrimary >= 0.5) {
     return "single-primary";
   }
-
   return "none";
 }
 
@@ -429,11 +193,9 @@ function summarizeHeroHeadingScale(scaleRatio: number): "compact" | "moderate" |
   if (scaleRatio >= 3.2) {
     return "large";
   }
-
   if (scaleRatio >= 2.4) {
     return "moderate";
   }
-
   return "compact";
 }
 
@@ -479,26 +241,13 @@ function summarizePricingPresence(snapshots: PageSnapshot[], sectionOrders: stri
   if (hasPricingSection && hasPricingPage) {
     return "section+page";
   }
-
   if (hasPricingPage) {
     return "page";
   }
-
   if (hasPricingSection) {
     return "section";
   }
-
   return "none";
-}
-
-function summarizeProofPresence(snapshots: PageSnapshot[]): ProofPresence {
-  const proofSnapshots = snapshots.filter((snapshot) => snapshot.sectionCandidates.some((item) => item.labels.includes("proof")));
-  if (proofSnapshots.length === 0) {
-    return "none";
-  }
-
-  const prominent = proofSnapshots.filter((snapshot) => snapshot.sectionCandidates.some((item) => item.labels.includes("proof") && item.top <= 1800));
-  return prominent.length >= Math.max(1, Math.ceil(snapshots.length / 2)) ? "prominent" : "supporting";
 }
 
 function summarizeNavigation(snapshots: PageSnapshot[], primaryCounts: number[]): string {
@@ -524,11 +273,9 @@ function summarizeCtaPresence(stats: Array<{ primaryCount: number }>): string {
   if (averagePrimary >= 2) {
     return "repeated primary CTA across key sections";
   }
-
   if (averagePrimary >= 1) {
     return "single clear primary CTA per page";
   }
-
   return "CTA present but visually restrained";
 }
 
@@ -573,15 +320,12 @@ function classifyHeroCtaPattern(topPrimaryCount: number): HeroCtaPattern {
   if (topPrimaryCount >= 3) {
     return "repeated";
   }
-
   if (topPrimaryCount === 2) {
     return "dual-cta";
   }
-
   if (topPrimaryCount === 1) {
     return "single-primary";
   }
-
   return "none";
 }
 
@@ -589,11 +333,9 @@ function classifyButtonRadius(radiusMedian: number): ButtonRadius {
   if (radiusMedian >= 18) {
     return "pill";
   }
-
   if (radiusMedian >= 8) {
     return "soft";
   }
-
   return "sharp";
 }
 
@@ -601,11 +343,9 @@ function classifyButtonEmphasis(primaryCount: number): ButtonEmphasis {
   if (primaryCount >= 2) {
     return "solid";
   }
-
   if (primaryCount >= 1) {
     return "mixed";
   }
-
   return "subtle";
 }
 
@@ -613,86 +353,15 @@ function classifyButtonSize(avgPaddingX: number, avgPaddingY: number): ButtonSiz
   if (avgPaddingX >= 52 || avgPaddingY >= 18) {
     return "large";
   }
-
   if (avgPaddingX >= 28 || avgPaddingY >= 10) {
     return "comfortable";
   }
-
   return "compact";
 }
 
 function summarizeFooter(snapshots: PageSnapshot[]): string {
   const footerLinkCount = Math.round(average(snapshots.map((snapshot) => snapshot.footerLinkTexts.length)));
   return footerLinkCount >= 8 ? "multi-column footer with utility links" : "compact footer with essential links";
-}
-
-function summarizeCards(snapshots: PageSnapshot[]): string {
-  const candidates = snapshots.flatMap((snapshot) => snapshot.sectionCandidates);
-  const averageCardCount = average(candidates.map((candidate) => candidate.cardCount));
-  const pricingHeavy = candidates.filter((candidate) => candidate.labels.includes("pricing") && candidate.cardCount >= 3).length;
-  const proofHeavy = candidates.filter((candidate) => candidate.labels.includes("proof") && candidate.cardCount >= 3).length;
-
-  if (averageCardCount < 2) {
-    return "minimal card usage";
-  }
-  if (pricingHeavy >= 2) {
-    return "comparison-style pricing cards";
-  }
-  if (proofHeavy >= 2) {
-    return "editorial proof panels and case-study cards";
-  }
-  if (averageCardCount >= 4) {
-    return "modular product-card grid";
-  }
-  return "mixed supporting cards";
-}
-
-function summarizePricingBlocks(snapshots: PageSnapshot[]): string {
-  const pricingCandidates = snapshots.flatMap((snapshot) => snapshot.sectionCandidates.filter((candidate) => candidate.labels.includes("pricing")));
-  if (pricingCandidates.length === 0) {
-    return "no dedicated pricing blocks";
-  }
-
-  const averageCardCount = average(pricingCandidates.map((candidate) => candidate.cardCount));
-  if (averageCardCount >= 5) {
-    return "dense comparison pricing cards";
-  }
-  if (averageCardCount >= 3) {
-    return "tiered pricing cards";
-  }
-  if (averageCardCount >= 1) {
-    return "single-offer pricing panels";
-  }
-  return "pricing path without visible pricing block";
-}
-
-function summarizeProofBlocks(snapshots: PageSnapshot[]): string {
-  const proofCandidates = snapshots.flatMap((snapshot) => snapshot.sectionCandidates.filter((candidate) => candidate.labels.includes("proof")));
-  if (proofCandidates.length === 0) {
-    return "no explicit proof modules";
-  }
-
-  const logoHeavy = proofCandidates.filter((candidate) => candidate.logoLikeCount >= 3).length;
-  const cardHeavy = proofCandidates.filter((candidate) => candidate.cardCount >= 3).length;
-  if (logoHeavy > 0 && cardHeavy > 0) {
-    return "mixed logo proof and testimonial/case-study modules";
-  }
-  if (logoHeavy > 0) {
-    return "logo-band proof modules";
-  }
-  if (cardHeavy > 0) {
-    return "testimonial or case-study cards";
-  }
-  return "lightweight trust copy modules";
-}
-
-function hasCardHeavySections(snapshot: PageSnapshot): boolean {
-  return snapshot.sectionCandidates.some((candidate) => candidate.cardCount >= 3 || candidate.logoLikeCount >= 3);
-}
-
-function hasMediaHeavyHero(snapshot: PageSnapshot): boolean {
-  const hero = findSectionCandidate(snapshot, "hero");
-  return Boolean(hero && (hero.mediaCount >= 1 || hero.largeMediaCount >= 1));
 }
 
 function detectSectionOrder(snapshot: PageSnapshot): string[] {
@@ -703,7 +372,6 @@ function detectSectionOrder(snapshot: PageSnapshot): string[] {
   if (uniqueOrdered.length > 0) {
     return uniqueOrdered;
   }
-
   return inferFallbackSections(snapshot);
 }
 
@@ -714,7 +382,6 @@ function mergeOrderedPatterns(patterns: string[][]): string[] {
       counts.set(label, (counts.get(label) ?? 0) + 1);
     }
   }
-
   return [...counts.entries()]
     .sort((left, right) => right[1] - left[1])
     .map(([label]) => label)
@@ -727,11 +394,9 @@ function inferDensity(snapshots: PageSnapshot[]): "airy" | "balanced" | "dense" 
   if (averageRatio < 0.55) {
     return "airy";
   }
-
   if (averageRatio < 1) {
     return "balanced";
   }
-
   return "dense";
 }
 
@@ -744,11 +409,9 @@ function inferSectionRhythm(snapshots: PageSnapshot[]): string {
   if (spacing >= 650) {
     return "large vertical spacing";
   }
-
   if (spacing >= 380) {
     return "moderate vertical spacing";
   }
-
   return "tight vertical spacing";
 }
 
@@ -758,11 +421,9 @@ function inferContentWidth(snapshots: PageSnapshot[]): string {
   if (medianWidth >= 1200) {
     return "wide content container";
   }
-
   if (medianWidth >= 900) {
     return "standard marketing container";
   }
-
   return "compact content container";
 }
 
@@ -770,17 +431,6 @@ function findSectionCandidate(snapshot: PageSnapshot, label: string) {
   return [...snapshot.sectionCandidates]
     .filter((candidate) => candidate.labels.includes(label))
     .sort((left, right) => left.top - right.top)[0];
-}
-
-function getHeroHeadingSize(snapshot: PageSnapshot): number {
-  const heroHeading = findSectionCandidate(snapshot, "hero")?.headingSize;
-  if (heroHeading && heroHeading > 0) {
-    return heroHeading;
-  }
-
-  return snapshot.headings
-    .filter((heading) => heading.top <= 900)
-    .sort((left, right) => right.fontSize - left.fontSize)[0]?.fontSize ?? 0;
 }
 
 function summarizeBackgroundModes(modes: BackgroundMode[]): BackgroundMode {
@@ -793,7 +443,6 @@ function guessBackgroundMode(colorValue: string): BackgroundMode {
   if (!color) {
     return "light";
   }
-
   return relativeLuminance(color) < 0.35 ? "dark" : "light";
 }
 
@@ -803,58 +452,14 @@ function guessContrast(backgroundValue: string, textValue: string): ContrastTend
   if (!background || !text) {
     return "medium";
   }
-
   const ratio = contrastRatio(background, text);
   if (ratio >= 7) {
     return "high";
   }
-
   if (ratio >= 4.5) {
     return "medium";
   }
-
   return "low";
-}
-
-function inferTone(input: {
-  accentCount: number;
-  backgroundMode: BackgroundMode;
-  density: "airy" | "balanced" | "dense";
-  navLinkCount: number;
-  sectionOrder: string[];
-  headingFamily: string;
-}): Tone[] {
-  const tones = new Set<Tone>();
-
-  if (input.accentCount <= 1 && input.density !== "dense") {
-    tones.add("minimal");
-  }
-
-  if (input.navLinkCount >= 5 && (input.sectionOrder.includes("pricing") || input.sectionOrder.includes("features"))) {
-    tones.add("technical");
-  }
-
-  if (input.sectionOrder.includes("proof") && input.sectionOrder.includes("cta")) {
-    tones.add("trust-focused");
-  }
-
-  if (input.backgroundMode === "dark" && input.accentCount <= 1) {
-    tones.add("premium");
-  }
-
-  if (input.navLinkCount >= 8 && input.sectionOrder.includes("pricing") && input.sectionOrder.includes("proof")) {
-    tones.add("enterprise-like");
-  }
-
-  if (input.accentCount >= 4) {
-    tones.add("playful");
-  }
-
-  if (input.headingFamily.includes("serif") && input.density !== "dense") {
-    tones.add("editorial");
-  }
-
-  return tones.size > 0 ? [...tones] : ["technical"];
 }
 
 function addIntentScore(
@@ -873,9 +478,7 @@ function inferFallbackSections(snapshot: PageSnapshot): string[] {
   const sections: string[] = [];
   const topHeadings = snapshot.headings.filter((heading) => heading.top <= 900);
   const largestTopHeading = [...topHeadings].sort((left, right) => right.fontSize - left.fontSize)[0];
-  const topPrimaryCount = snapshot.actions.filter((action) => {
-    return action.top <= 900 && isLikelyPrimaryAction(action);
-  }).length;
+  const topPrimaryCount = snapshot.actions.filter((action) => action.top <= 900 && isLikelyPrimaryAction(action)).length;
 
   if (largestTopHeading || topPrimaryCount > 0) {
     sections.push("hero");
@@ -906,7 +509,6 @@ function isLikelyPrimaryAction(action: PageSnapshot["actions"][number]): boolean
   if (background && background.a > 0 && colorSaturation(background) >= 0.08 && buttonLikeShape) {
     return true;
   }
-
   return buttonLikeText && buttonLikeShape;
 }
 
@@ -914,7 +516,6 @@ function isLikelyHeaderAction(action: PageSnapshot["actions"][number]): boolean 
   if (!(action.region === "header" || action.region === "nav")) {
     return false;
   }
-
   const text = action.text.toLowerCase();
   const shortText = text.length > 0 && text.length <= 24;
   return shortText && isLikelyPrimaryAction(action);
@@ -935,11 +536,9 @@ function summarizeScale(scaleRatio: number): string {
   if (scaleRatio >= 3.2) {
     return "large hero, standard body";
   }
-
   if (scaleRatio >= 2.4) {
     return "moderate hero, standard body";
   }
-
   return "compact heading scale";
 }
 
@@ -948,11 +547,9 @@ function normalizeFontLabel(rawFamily: string): string {
   if (family.includes("serif")) {
     return "serif";
   }
-
   if (family.includes("mono")) {
     return "mono";
   }
-
   return "sans";
 }
 
@@ -969,7 +566,6 @@ function parseCssColor(value: string): RgbColor | null {
     if ([r, g, b].some((part) => part === undefined)) {
       return null;
     }
-
     return { r: Number(r), g: Number(g), b: Number(b), a: Number(a) };
   }
 
@@ -1036,7 +632,6 @@ function average(values: number[]): number {
   if (values.length === 0) {
     return 0;
   }
-
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
@@ -1044,7 +639,6 @@ function median(values: number[]): number {
   if (values.length === 0) {
     return 0;
   }
-
   const sorted = [...values].sort((left, right) => left - right);
   const middle = Math.floor(sorted.length / 2);
   return sorted.length % 2 === 0 ? (sorted[middle - 1]! + sorted[middle]!) / 2 : sorted[middle]!;
@@ -1055,7 +649,6 @@ function mostCommon<T extends string>(values: T[]): T | undefined {
   for (const value of values) {
     counts.set(value, (counts.get(value) ?? 0) + 1);
   }
-
   return [...counts.entries()].sort((left, right) => right[1] - left[1])[0]?.[0];
 }
 

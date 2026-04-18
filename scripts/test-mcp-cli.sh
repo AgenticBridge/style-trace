@@ -21,7 +21,7 @@ URLS_JSON="$($NODE_BIN -e 'console.log(JSON.stringify(process.argv.slice(1)))' "
 OUTPUT_DIR="$ROOT_DIR/.tmp"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 OUTPUT_PATH="${STYLE_TRACE_OUTPUT_PATH:-$OUTPUT_DIR/mcp-payload-$TIMESTAMP.json}"
-MAX_PAGES="${STYLE_TRACE_MAX_PAGES:-5}"
+EVIDENCE_MODE="${STYLE_TRACE_EVIDENCE_MODE:-omit}"
 
 npm run build >/dev/null
 mkdir -p "$OUTPUT_DIR"
@@ -32,8 +32,8 @@ npm exec --yes @modelcontextprotocol/inspector -- --cli --transport stdio \
   --method tools/call \
   --tool-name analyze_website_style \
   --tool-arg "urls=$URLS_JSON" \
-  --tool-arg "maxPagesPerSite=$MAX_PAGES" \
   --tool-arg synthesisMode=cross-site-commonality \
+  --tool-arg evidenceMode="$EVIDENCE_MODE" \
   > "$OUTPUT_PATH"
 
 printf '%s\n' "$OUTPUT_PATH"

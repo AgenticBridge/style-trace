@@ -5,25 +5,31 @@
 ![Playwright](https://img.shields.io/badge/browser-Playwright-45BA4B)
 ![MCP](https://img.shields.io/badge/protocol-MCP-6f42c1)
 
-StyleTrace is an MCP server that analyzes public marketing websites and turns them into a short style summary you can reuse.
+StyleTrace is an MCP server that analyzes public marketing websites and returns a compact, evidence-first design grammar for agents and reviewers.
 
-![StyleTrace hero preview](docs/promo/style-trace-hero.png)
+## Why Use It
 
-## Why use it
-
-- compare a few reference sites and see what they really share
-- turn vague style references into a structured result
-- give a downstream agent or reviewer something clear to work from
-- keep the output small and focused
+- compare a few reference sites and see what patterns actually repeat
+- turn vague visual references into structured output
+- give downstream agents a smaller, more reviewable input
+- keep the analysis focused on evidence instead of design speculation
+- analyze exactly the pages you provide, without surprise crawling
 
 ## Installation
 
 Requirements:
 
 - Node.js `>=20`
-- Chromium for Playwright
+- Playwright Chromium
 
-Setup:
+Install from npm:
+
+```bash
+npm install -g @agenticbridge/style-trace
+npx playwright install chromium
+```
+
+Or run from a local clone:
 
 ```bash
 npm install
@@ -33,9 +39,22 @@ npm run build
 
 ## Usage
 
-Connect it from your MCP client:
+Connect it from your MCP client.
 
-From a local clone:
+Published package:
+
+```json
+{
+  "mcpServers": {
+    "style-trace": {
+      "command": "npx",
+      "args": ["-y", "@agenticbridge/style-trace"]
+    }
+  }
+}
+```
+
+Local clone:
 
 ```json
 {
@@ -48,75 +67,63 @@ From a local clone:
 }
 ```
 
-If published to npm, users can run it directly via `npx`:
+The server exposes one tool: `analyze_website_style`.
+
+Example input:
 
 ```json
 {
-  "mcpServers": {
-    "style-trace": {
-      "command": "npx",
-      "args": ["-y", "style-trace"]
-    }
-  }
+  "urls": ["https://www.apple.com", "https://www.framer.com"],
+  "synthesisMode": "cross-site-commonality"
 }
 ```
 
-They still need Playwright Chromium installed once on the machine:
-
-```bash
-npx playwright install chromium
-```
-
-Or start the built server directly:
+You can also start the built server directly:
 
 ```bash
 npm start
 ```
 
-## How it works
+## What You Get
 
-StyleTrace visits a homepage and a few important internal pages with Playwright. It looks for repeated style patterns such as layout, CTA treatment, proof sections, pricing cues, and tone. Then it returns a compact JSON result, with an optional markdown summary.
+The tool returns structured JSON in `structuredContent`.
 
-It exposes one MCP tool: `analyze_website_style`.
+Each result includes:
 
-## What you get
+- analyzed pages exactly matching the supplied URLs
+- captured page/module descriptors for downstream reconstruction
+- a per-site design grammar organized around 10 aspects:
+  - visual hierarchy
+  - typography scale
+  - color architecture
+  - grid and spacing
+  - iconography and imagery
+  - component states
+  - navigation logic
+  - micro-interactions
+  - form and input design
+  - responsive breakpoints
+- signature motifs and reconstruction directives derived from those aspects
+- an aspect-based synthesis layer that preserves reference signatures instead of averaging them away
+- guideline rules distilled from repeated evidence
 
-The result includes:
+If you need raw evidence paths or screenshot capture metadata, set `evidenceMode` to `file` or `inline`.
 
-- analyzed pages per site
-- a style profile
-- evidence for the main signals
-- shared patterns across sites
-- guideline rules
-- an optional markdown summary
+## How It Works
+
+StyleTrace visits exactly the public URLs you provide with Playwright. It extracts narrow, reviewable signals such as module structure, CTA treatment, proof modules, pricing presence, tone, and signature motifs. It does not crawl additional pages by default, and it does not try to generate a new design system or make speculative recommendations.
 
 ## Limits
 
 - public `http` and `https` URLs only
 - no auth flows or private-network targets
-- max 5 analyzed pages per site
+- no automatic internal-page discovery in the default flow
 - stdio transport only
-- no persistence, queues, or web UI
+- no persistence, queueing, or web UI
 
 ## Verification
 
-Fast local check:
-
-```bash
-npm run test:mcp-cli
-```
-
-Or run it on your own public URLs:
-
-```bash
-bash scripts/test-mcp-cli.sh https://www.apple.com/ca/store https://store.google.com/category/phones?hl=en-GB&pli=1
-```
-
-## Contributing
-
-Contributions are welcome. Keep the project narrow, evidence-first, and easy to review.
-
-Before opening a pull request, run:
+Run the local checks:
 
 ```bash
 npm run typecheck
@@ -124,6 +131,28 @@ npm run build
 npm test
 ```
 
+For a real MCP transport smoke test:
+
+```bash
+npm run test:mcp-cli
+```
+
+For the full review artifact flow with source captures, `with MCP` vs `without MCP` LLM regeneration, and a composite diff board:
+
+```bash
+npm run test:e2e -- --instance apple-pixel-samsung
+```
+
+Or run it against your own public URLs:
+
+```bash
+bash scripts/test-mcp-cli.sh https://www.apple.com https://www.framer.com
+```
+
+## Contributing
+
+Keep the project compact, evidence-first, and easy to review. Extend the shared analysis pipeline instead of adding parallel systems.
+
 ## License
 
-This repository does not currently include a license file.
+MIT

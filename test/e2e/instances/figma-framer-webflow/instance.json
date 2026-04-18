@@ -5,6 +5,5 @@
     "https://www.framer.com/",
     "https://webflow.com/"
   ],
-  "maxPagesPerSite": 3,
   "synthesisMode": "cross-site-commonality"
 }

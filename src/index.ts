@@ -2,19 +2,19 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { ZodError } from "zod";
-import { analyzeWebsiteStyle } from "./analyzeStyle.js";
-import { inputSchema, outputSchema } from "./schema.js";
+import { analyzeWebsiteStyle } from "./analysis/analyzeStyle.js";
+import { inputSchema, outputSchema } from "./core/schema.js";
 
 const server = new McpServer({
   name: "style-trace",
-  version: "0.1.0",
+  version: "0.3.0",
 });
 
 server.registerTool(
   "analyze_website_style",
   {
     title: "Analyze website style",
-    description: "Analyze one or more public marketing-site URLs and extract a compact evidence-first style profile. maxPagesPerSite is capped at 5 total pages per site including the homepage.",
+    description: "Analyze one or more exact public marketing-site URLs and extract a compact design grammar. StyleTrace analyzes only the URLs you provide. Evidence can be omitted, exported to a sidecar file, or inlined.",
     inputSchema,
     outputSchema,
     annotations: {

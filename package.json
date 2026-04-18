@@ -1,6 +1,6 @@
 {
   "name": "@agenticbridge/style-trace",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Playwright-based MCP server that extracts evidence-first website style signals.",
   "type": "module",
   "files": [
@@ -16,7 +16,6 @@
     "test": "node --test --import tsx test/**/*.test.ts",
     "test:mcp-cli": "bash scripts/test-mcp-cli.sh",
     "test:e2e": "tsx test/e2e/runReview.ts",
-    "promo:artifact": "tsx scripts/generate-promo-artifact.ts",
     "start": "node dist/src/index.js",
     "dev": "tsx src/index.ts",
     "prepack": "npm run build"
