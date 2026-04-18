@@ -37,3 +37,10 @@ test("inputSchema accepts exact-url input without crawl flags", () => {
   assert.deepEqual(parsed.urls, ["https://example.com"]);
   assert.equal(parsed.evidenceMode, "file");
 });
+
+test("inputSchema rejects synthesisMode as a public input", () => {
+  assert.throws(() => inputSchema.parse({
+    urls: ["https://example.com"],
+    synthesisMode: "cross-site-commonality",
+  }));
+});

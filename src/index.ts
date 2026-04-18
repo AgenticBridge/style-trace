@@ -7,7 +7,7 @@ import { inputSchema, outputSchema } from "./core/schema.js";
 
 const server = new McpServer({
   name: "style-trace",
-  version: "0.3.2",
+  version: "0.3.3",
 });
 
 server.registerTool(
