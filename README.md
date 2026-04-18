@@ -4,16 +4,17 @@
 ![TypeScript](https://img.shields.io/badge/built%20with-TypeScript-3178C6)
 ![Playwright](https://img.shields.io/badge/browser-Playwright-45BA4B)
 ![MCP](https://img.shields.io/badge/protocol-MCP-6f42c1)
+![npm downloads](https://img.shields.io/npm/dm/@agenticbridge/style-trace)
 
 StyleTrace is an MCP server that analyzes public marketing websites and returns a compact, evidence-first design grammar for agents and reviewers.
 
+![StyleTrace reverse engineering comparison](docs/readme-style-reverse-engineering.png)
+
 ## Why Use It
 
-- compare a few reference sites and see what patterns actually repeat
-- turn vague visual references into structured output
-- give downstream agents a smaller, more reviewable input
-- keep the analysis focused on evidence instead of design speculation
-- analyze exactly the pages you provide, without surprise crawling
+- turn a few reference pages into a clear design grammar an agent can actually use
+- make website regeneration less generic by preserving the parts that feel distinctive
+- analyze only the exact URLs you give it, so the result stays predictable and reviewable
 
 ## Installation
 
@@ -90,22 +91,9 @@ The tool returns structured JSON in `structuredContent`.
 
 Each result includes:
 
-- analyzed pages exactly matching the supplied URLs
-- captured page/module descriptors for downstream reconstruction
-- a per-site design grammar organized around 10 aspects:
-  - visual hierarchy
-  - typography scale
-  - color architecture
-  - grid and spacing
-  - iconography and imagery
-  - component states
-  - navigation logic
-  - micro-interactions
-  - form and input design
-  - responsive breakpoints
-- signature motifs and reconstruction directives derived from those aspects
-- an aspect-based synthesis layer that preserves reference signatures instead of averaging them away
-- guideline rules distilled from repeated evidence
+- `sites`: one entry per input URL, with `pagesAnalyzed`, `capturedPages`, and a ten-aspect `designGrammar`
+- `synthesis`: shared patterns plus per-reference signatures for cross-site blending
+- `guideline`: distilled implementation rules and unsupported patterns to avoid
 
 If you need raw evidence paths or screenshot capture metadata, set `evidenceMode` to `file` or `inline`.
 
