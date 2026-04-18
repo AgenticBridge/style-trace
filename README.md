@@ -14,7 +14,7 @@ StyleTrace is an MCP server that analyzes websites and returns a compact design 
 
 ## Why Use It
 
-- turn a few reference pages into a clear design grammar an agent can actually use
+- turn a few reference pages or visual references into a clear design grammar an agent can actually use
 - make website regeneration less generic by preserving the parts that feel distinctive
 - analyze only the exact URLs you give it, so the result stays predictable and reviewable
 
@@ -72,7 +72,7 @@ Local clone:
 
 The server exposes one tool: `analyze_website_style`.
 
-Example input:
+Example input with website URLs:
 
 ```json
 {
@@ -80,13 +80,29 @@ Example input:
 }
 ```
 
+Example input with mixed website and image references:
+
+```json
+{
+  "references": [
+    { "type": "url", "value": "https://www.apple.com/iphone/" },
+    { "type": "image", "value": "https://example-cdn.com/reference/hero-shot.png" }
+  ],
+  "evidenceMode": "inline"
+}
+```
+
+`urls` remains supported for website-only input. Use `references` when you want to mix website and image sources in one request.
+
 ## How It Works
 
-StyleTrace visits exactly the public URLs you provide with Playwright. It extracts narrow, reviewable signals such as module structure, hero treatment, CTA patterns, proof modules, imagery, forms, breakpoints, and signature motifs. It does not crawl additional pages, and it does not try to invent a new design system or make speculative recommendations.
+StyleTrace visits exactly the public website URLs you provide with Playwright, and it can also analyze direct public image URLs as visual references. It extracts narrow, reviewable signals such as module structure, hero treatment, CTA patterns, proof modules, imagery, forms, breakpoints, and signature motifs. It does not crawl additional pages, and it does not try to invent a new design system or make speculative recommendations.
 
 ## Limits
 
 - public `http` and `https` URLs only
+- image references must point to direct public image assets such as `.png`, `.jpg`, `.webp`, `.gif`, `.avif`, or `.svg`
+- image-only references produce weaker inference for typography, navigation, forms, motion, and breakpoints than live website references
 - no auth flows or private-network targets
 - stdio transport only
 - no persistence, queueing, or web UI

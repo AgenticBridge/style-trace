@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { InputPayload } from "../core/schema.js";
 import { buildSiteAnalysisResult, capturePageSnapshot, dismissConsentOverlays } from "./pageAnalysis.js";
+import { analyzeImageReference } from "./imageReferenceAnalysis.js";
 import { captureVisualEvidence } from "./screenshotCapture.js";
 import { synthesizeResult } from "./synthesis.js";
 import type { DesignAspect, DesignAspectKey, InternalStyleTraceResult, PublicSiteProfile, SiteProfile, SiteDesignGrammar, StyleTraceResult } from "../core/types.js";
@@ -15,8 +16,12 @@ export async function analyzeWebsiteStyle(input: InputPayload): Promise<StyleTra
 
   try {
     const sites: SiteProfile[] = [];
-    for (const url of normalized.urls) {
-      sites.push(await analyzePage(browser, url, runId));
+    for (const reference of normalized.references) {
+      sites.push(
+        reference.type === "url"
+          ? await analyzePage(browser, reference.value, runId)
+          : await analyzeImageReference(browser, reference.value, runId),
+      );
     }
 
     const fullResult = synthesizeResult(sites, normalized.synthesisMode);
@@ -63,6 +68,7 @@ async function analyzePage(
 
     return {
       url,
+      sourceType: "url",
       pagesAnalyzed: snapshots.map((snapshot) => snapshot.path || new URL(snapshot.url).pathname || "/"),
       pageEvidence,
       capturedPages: capturedPagesWithVisuals,
@@ -134,6 +140,7 @@ function toPublicResult(
 function toPublicSiteProfile(site: SiteProfile, includeInlineEvidence: boolean): PublicSiteProfile {
   return {
     url: site.url,
+    ...(site.sourceType ? { sourceType: site.sourceType } : {}),
     pagesAnalyzed: site.pagesAnalyzed,
     ...(includeInlineEvidence ? { pageEvidence: site.pageEvidence } : {}),
     capturedPages: site.capturedPages.map((page) => ({

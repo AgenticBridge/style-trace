@@ -1,5 +1,6 @@
 export type SynthesisMode = "single-site-profile" | "cross-site-commonality";
 export type EvidenceMode = "omit" | "file" | "inline";
+export type ReferenceType = "url" | "image";
 export type Confidence = "high" | "medium" | "low";
 export type DesignAspectKey =
   | "visualHierarchy"
@@ -34,7 +35,10 @@ export type VisualBalance = "copy-led" | "balanced" | "media-led";
 export type SurfaceStyle = "flat" | "panel" | "mixed";
 export type Whitespace = "tight" | "moderate" | "open";
 export interface NormalizedInput {
-  urls: string[];
+  references: Array<{
+    type: ReferenceType;
+    value: string;
+  }>;
   synthesisMode: SynthesisMode;
   evidenceMode: EvidenceMode;
 }
@@ -276,6 +280,7 @@ export interface SiteDesignGrammar {
 
 export interface SiteProfile {
   url: string;
+  sourceType?: ReferenceType;
   pagesAnalyzed: string[];
   pageEvidence?: PageEvidence[];
   capturedPages: CapturedPage[];
@@ -284,6 +289,7 @@ export interface SiteProfile {
 
 export interface PublicSiteProfile {
   url: string;
+  sourceType?: ReferenceType;
   pagesAnalyzed: string[];
   pageEvidence?: PageEvidence[];
   capturedPages: CapturedPage[];

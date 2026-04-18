@@ -7,14 +7,14 @@ import { inputSchema, outputSchema } from "./core/schema.js";
 
 const server = new McpServer({
   name: "style-trace",
-  version: "0.3.3",
+  version: "0.4.0",
 });
 
 server.registerTool(
   "analyze_website_style",
   {
     title: "Analyze website style",
-    description: "Analyze one or more exact public marketing-site URLs and extract a compact design grammar. StyleTrace analyzes only the URLs you provide. Evidence can be omitted, exported to a sidecar file, or inlined.",
+    description: "Analyze exact public website URLs, public image URLs, or a mix of both and extract a compact design grammar. StyleTrace analyzes only the references you provide. Evidence can be omitted, exported to a sidecar file, or inlined.",
     inputSchema,
     outputSchema,
     annotations: {
