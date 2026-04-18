@@ -1,17 +1,24 @@
 import type { InputPayload } from "./schema.js";
-import type { EvidenceMode, NormalizedInput, SynthesisMode } from "./types.js";
+import type { EvidenceMode, NormalizedInput, ReferenceType, SynthesisMode } from "./types.js";
 
 const localHostnames = new Set(["localhost", "0.0.0.0", "127.0.0.1", "::1"]);
 
 export function normalizeInput(input: InputPayload): NormalizedInput {
-  const urls = Array.from(new Set(input.urls.map((value) => normalizePublicUrl(value))));
-  if (urls.length === 0) {
-    throw new Error("Provide at least one public URL.");
+  const references = dedupeReferences([
+    ...(input.urls ?? []).map((value) => ({ type: "url" as const, value })),
+    ...(input.references ?? []),
+  ].map((reference) => ({
+    type: reference.type,
+    value: reference.type === "url" ? normalizePublicUrl(reference.value) : normalizePublicImageUrl(reference.value),
+  })));
+
+  if (references.length === 0) {
+    throw new Error("Provide at least one public URL or image reference.");
   }
 
   return {
-    urls,
-    synthesisMode: resolveSynthesisMode(urls.length),
+    references,
+    synthesisMode: resolveSynthesisMode(references.length),
     evidenceMode: resolveEvidenceMode(input.evidenceMode),
   };
 }
@@ -25,6 +32,30 @@ function resolveEvidenceMode(override: EvidenceMode | undefined): EvidenceMode {
 }
 
 export function normalizePublicUrl(rawValue: string): string {
+  const parsed = normalizePublicHttpUrl(rawValue);
+  parsed.hash = "";
+  if ((parsed.protocol === "https:" && parsed.port === "443") || (parsed.protocol === "http:" && parsed.port === "80")) {
+    parsed.port = "";
+  }
+
+  return parsed.toString();
+}
+
+export function normalizePublicImageUrl(rawValue: string): string {
+  const parsed = normalizePublicHttpUrl(rawValue);
+  if (!looksLikeImagePath(parsed.pathname)) {
+    throw new Error(`Image references must point to a public image URL: ${rawValue.trim()}`);
+  }
+
+  parsed.hash = "";
+  if ((parsed.protocol === "https:" && parsed.port === "443") || (parsed.protocol === "http:" && parsed.port === "80")) {
+    parsed.port = "";
+  }
+
+  return parsed.toString();
+}
+
+function normalizePublicHttpUrl(rawValue: string): URL {
   const value = rawValue.trim();
   if (!value) {
     throw new Error("URLs must be non-empty strings.");
@@ -54,12 +85,19 @@ export function normalizePublicUrl(rawValue: string): string {
     throw new Error(`Private-network URLs are not supported: ${value}`);
   }
 
-  parsed.hash = "";
-  if ((parsed.protocol === "https:" && parsed.port === "443") || (parsed.protocol === "http:" && parsed.port === "80")) {
-    parsed.port = "";
-  }
+  return parsed;
+}
 
-  return parsed.toString();
+function dedupeReferences(references: NormalizedInput["references"]): NormalizedInput["references"] {
+  const unique = new Map<string, { type: ReferenceType; value: string }>();
+  for (const reference of references) {
+    unique.set(`${reference.type}:${reference.value}`, reference);
+  }
+  return [...unique.values()];
+}
+
+function looksLikeImagePath(pathname: string): boolean {
+  return /\.(png|jpe?g|webp|gif|avif|svg)$/i.test(pathname);
 }
 
 function isPrivateIpv4(hostname: string): boolean {

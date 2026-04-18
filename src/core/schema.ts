@@ -1,11 +1,32 @@
 import { z } from "zod";
 
+const referenceSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("url"),
+    value: z.string().describe("Exact public http/https URL to analyze as a website reference."),
+  }),
+  z.object({
+    type: z.literal("image"),
+    value: z.string().describe("Exact public http/https image URL to analyze as a visual reference."),
+  }),
+]);
+
 export const inputSchema = z.object({
-  urls: z.array(z.string()).min(1, "Provide at least one URL.").max(10, "Provide at most 10 URLs.")
+  urls: z.array(z.string()).min(1, "Provide at least one URL.").max(10, "Provide at most 10 URLs.").optional()
     .describe("One or more exact public http/https URLs to analyze. StyleTrace analyzes only the URLs you provide and does not crawl additional pages automatically."),
+  references: z.array(referenceSchema).min(1, "Provide at least one reference.").max(10, "Provide at most 10 references.").optional()
+    .describe("Mixed visual references to analyze. Use type=url for websites and type=image for public image URLs."),
   evidenceMode: z.enum(["omit", "file", "inline"]).optional()
     .describe("How evidence should be returned. Defaults to omit. Use file to export evidence to a sidecar JSON instead of embedding it in structuredContent."),
-}).strict();
+}).strict().superRefine((value, ctx) => {
+  if (!value.urls?.length && !value.references?.length) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Provide at least one URL or reference.",
+      path: ["urls"],
+    });
+  }
+});
 
 const pageEvidenceSchema = z.object({
   path: z.string(),
@@ -65,6 +86,7 @@ export const outputSchema = z.object({
   sites: z.array(
     z.object({
       url: z.url(),
+      sourceType: z.enum(["url", "image"]).optional(),
       pagesAnalyzed: z.array(z.string()),
       pageEvidence: z.array(pageEvidenceSchema).optional(),
       capturedPages: z.array(
