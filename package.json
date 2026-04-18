@@ -33,7 +33,11 @@
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
   },
-  "main": "index.js",
+  "main": "dist/src/index.js",
+  "exports": {
+    ".": "./dist/src/index.js",
+    "./package.json": "./package.json"
+  },
   "directories": {
     "doc": "docs",
     "test": "test"
