@@ -32,7 +32,6 @@ npm exec --yes @modelcontextprotocol/inspector -- --cli --transport stdio \
   --method tools/call \
   --tool-name analyze_website_style \
   --tool-arg "urls=$URLS_JSON" \
-  --tool-arg synthesisMode=cross-site-commonality \
   --tool-arg evidenceMode="$EVIDENCE_MODE" \
   > "$OUTPUT_PATH"
 

@@ -9,21 +9,15 @@ export function normalizeInput(input: InputPayload): NormalizedInput {
     throw new Error("Provide at least one public URL.");
   }
 
-  const synthesisMode = resolveSynthesisMode(urls.length, input.synthesisMode);
-
   return {
     urls,
-    synthesisMode,
+    synthesisMode: resolveSynthesisMode(urls.length),
     evidenceMode: resolveEvidenceMode(input.evidenceMode),
   };
 }
 
-function resolveSynthesisMode(urlCount: number, override: SynthesisMode | undefined): SynthesisMode {
-  if (!override) {
-    return urlCount > 1 ? "cross-site-commonality" : "single-site-profile";
-  }
-
-  return override;
+function resolveSynthesisMode(urlCount: number): SynthesisMode {
+  return urlCount > 1 ? "cross-site-commonality" : "single-site-profile";
 }
 
 function resolveEvidenceMode(override: EvidenceMode | undefined): EvidenceMode {

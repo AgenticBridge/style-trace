@@ -3,11 +3,9 @@ import { z } from "zod";
 export const inputSchema = z.object({
   urls: z.array(z.string()).min(1, "Provide at least one URL.").max(10, "Provide at most 10 URLs.")
     .describe("One or more exact public http/https URLs to analyze. StyleTrace analyzes only the URLs you provide and does not crawl additional pages automatically."),
-  synthesisMode: z.enum(["single-site-profile", "cross-site-commonality"]).optional()
-    .describe("Override synthesis behavior. Defaults to single-site-profile for 1 URL and cross-site-commonality for 2+ URLs."),
   evidenceMode: z.enum(["omit", "file", "inline"]).optional()
     .describe("How evidence should be returned. Defaults to omit. Use file to export evidence to a sidecar JSON instead of embedding it in structuredContent."),
-});
+}).strict();
 
 const pageEvidenceSchema = z.object({
   path: z.string(),

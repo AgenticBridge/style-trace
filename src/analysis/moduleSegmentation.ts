@@ -32,7 +32,6 @@ export function buildCapturedPages(snapshots: PageSnapshot[], pageEvidence: Page
         chromeVisibility: snapshot.navLinkTexts.length >= 8 ? "high" : snapshot.navLinkTexts.length >= 4 ? "medium" : "low",
         visualRhythm: inferVisualRhythm(modules),
       },
-      visualCaptures: [],
     };
   });
 }

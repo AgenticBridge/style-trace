@@ -8,7 +8,6 @@ import type { StyleTraceResult } from "../../src/core/types.js";
 interface ReviewInstance {
   label: string;
   urls: string[];
-  synthesisMode?: "single-site-profile" | "cross-site-commonality";
 }
 
 interface InspectorPayload {
