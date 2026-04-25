@@ -166,6 +166,8 @@ async function regenerateHtmlFromMcp(mcpResultPath: string, visualCapturePaths: 
   const prompt = [
     "You are generating a pure standalone HTML review artifact from a StyleTrace MCP result.",
     "Read the attached JSON file and produce exactly one self-contained HTML document.",
+    "Use promptReadyBrief as the primary downstream build brief.",
+    "Use styleInvariants as hard constraints, styleRisks as anti-drift guidance, compositionBlueprint for section structure, visualVocabulary for system-level consistency, and reviewContract as a self-check list.",
     "Goal:",
     "- visibly reflect the extracted design grammar and signature motifs",
     "- preserve differences implied by the MCP result instead of averaging them away",
@@ -177,6 +179,8 @@ async function regenerateHtmlFromMcp(mcpResultPath: string, visualCapturePaths: 
     "- make it screenshot-reviewable",
     "- include a hero, 2-4 body sections, and optional pricing if the MCP output supports it",
     "- do not add generic gradient-heavy tech styling unless the MCP explicitly supports it",
+    "- do not ignore reviewContract.mustMatch or reviewContract.mustAvoid",
+    "- preserve compositionBlueprint order unless there is a strong reason to collapse or merge modules",
   ].join("\n");
 
   const stdout = await runCommand(

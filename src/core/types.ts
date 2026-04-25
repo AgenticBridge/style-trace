@@ -1,7 +1,9 @@
 export type SynthesisMode = "single-site-profile" | "cross-site-commonality";
 export type EvidenceMode = "omit" | "file" | "inline";
-export type ReferenceType = "url" | "image";
+export type ReferenceType = "url" | "image" | "screenshot" | "html";
 export type Confidence = "high" | "medium" | "low";
+export type TargetArtifact = "landing-page" | "product-ui" | "slide-deck" | "prototype" | "comparison-board" | "other";
+export type Fidelity = "low" | "medium" | "high";
 export type DesignAspectKey =
   | "visualHierarchy"
   | "typographyScale"
@@ -41,6 +43,9 @@ export interface NormalizedInput {
   }>;
   synthesisMode: SynthesisMode;
   evidenceMode: EvidenceMode;
+  targetArtifact: TargetArtifact;
+  fidelity: Fidelity;
+  designIntent?: string;
 }
 
 export interface PageSnapshot {
@@ -220,6 +225,20 @@ export interface DerivedDesignSignals {
     structure: string[];
     contentWidth: string;
   };
+  imagery: {
+    iconDensity: "low" | "medium" | "high";
+    photoPresence: "low" | "medium" | "high";
+    illustrationPresence: "low" | "medium" | "high";
+    videoPresence: "none" | "present";
+  };
+  motion: {
+    motionLevel: "restrained" | "moderate" | "active";
+    stickyLevel: "none" | "light" | "strong";
+    hoverEmphasis: "subtle" | "clear" | "strong";
+  };
+  forms: {
+    fieldStyle: PageSnapshot["formSignals"]["fieldStyle"];
+  };
   components: {
     nav: string;
     buttons: string;
@@ -262,6 +281,127 @@ export interface DesignAspect {
   confidence: Confidence;
 }
 
+export interface VisualVocabulary {
+  typeSystem: {
+    headlineScale: string;
+    headingStyle: string;
+    bodyStyle: string;
+    families: string[];
+    confidence: Confidence;
+  };
+  colorSystem: {
+    backgroundMode: BackgroundMode;
+    contrast: ContrastTendency;
+    paletteRestraint: "restrained" | "moderate" | "varied";
+    accentCount: number;
+  };
+  layoutSystem: {
+    contentWidth: string;
+    sectionRhythm: string;
+    density: Density;
+    moduleRhythm: CapturedPage["visualSignals"]["visualRhythm"];
+  };
+  componentSystem: {
+    navDensity: NavDensity;
+    headerCtaPattern: HeaderCtaPattern;
+    heroCtaPattern: HeroCtaPattern;
+    buttonRadius: ButtonRadius;
+    buttonEmphasis: ButtonEmphasis;
+    cardDensity: VisualModule["cardDensity"];
+    formStyle: PageSnapshot["formSignals"]["fieldStyle"];
+  };
+  imagerySystem: {
+    heroMediaStyle: HeroMediaStyle;
+    mediaWeight: VisualModule["mediaWeight"];
+    iconDensity: "low" | "medium" | "high";
+    photoPresence: "low" | "medium" | "high";
+    illustrationPresence: "low" | "medium" | "high";
+    videoPresence: "none" | "present";
+  };
+  motionSystem: {
+    motionLevel: "restrained" | "moderate" | "active";
+    stickyLevel: "none" | "light" | "strong";
+    hoverEmphasis: "subtle" | "clear" | "strong";
+    confidence: Confidence;
+  };
+}
+
+export interface StyleInvariant {
+  id: string;
+  rule: string;
+  appliesTo: string[];
+  strength: "hard" | "soft";
+  confidence: Confidence;
+  evidenceCount: number;
+}
+
+export interface StyleRisk {
+  id: string;
+  risk: string;
+  reason: string;
+  severity: "high" | "medium" | "low";
+}
+
+export interface SoftGuess {
+  id: string;
+  area: string;
+  guidance: string;
+  confidence: Confidence;
+}
+
+export interface CompositionBlueprintStep {
+  siteUrl: string;
+  pagePath: string;
+  module: ModuleKind;
+  role: string;
+  layout: string;
+  emphasis: VisualModule["emphasis"];
+  mediaRole: VisualModule["mediaWeight"];
+  spacing: Whitespace;
+  surface: string;
+  ctaBehavior: HeroCtaPattern;
+  preserve: string[];
+  adaptationNotes: string[];
+}
+
+export interface VariationAxis {
+  axis: "density" | "mediaWeight" | "colorExpression" | "chromeVisibility" | "moduleRhythm" | "ctaPressure";
+  options: string[];
+  recommended: string;
+  rationale: string;
+}
+
+export interface BlendMode {
+  mode: "lead-reference" | "common-core" | "contrast-set";
+  headline: string;
+  directives: string[];
+}
+
+export interface PromptReadyBrief {
+  summary: string;
+  targetArtifact: TargetArtifact;
+  fidelity: Fidelity;
+  designIntent?: string;
+  buildPriorities: string[];
+  do: string[];
+  avoid: string[];
+  reviewChecklist: string[];
+}
+
+export interface ReviewContract {
+  mustMatch: StyleInvariant[];
+  mustAvoid: StyleRisk[];
+  compareAgainst: string[];
+  viewportChecks: string[];
+  uncertainAreas: string[];
+}
+
+export interface OriginalityBoundary {
+  safeToReuse: string[];
+  doNotCopy: string[];
+  adaptationGuidance: string[];
+}
+
 export interface SiteDesignGrammar {
   model: "ten-aspect-v1";
   visualHierarchy: DesignAspect;
@@ -284,6 +424,7 @@ export interface SiteProfile {
   pagesAnalyzed: string[];
   pageEvidence?: PageEvidence[];
   capturedPages: CapturedPage[];
+  derivedSignals: DerivedDesignSignals;
   designGrammar: SiteDesignGrammar;
 }
 
@@ -314,6 +455,16 @@ export interface StyleTraceResult {
   [key: string]: unknown;
   sites: PublicSiteProfile[];
   evidenceArtifactPath?: string;
+  visualVocabulary: VisualVocabulary;
+  styleInvariants: StyleInvariant[];
+  styleRisks: StyleRisk[];
+  softGuesses: SoftGuess[];
+  compositionBlueprint: CompositionBlueprintStep[];
+  variationAxes: VariationAxis[];
+  blendModes: BlendMode[];
+  promptReadyBrief: PromptReadyBrief;
+  reviewContract: ReviewContract;
+  originalityBoundary: OriginalityBoundary;
   synthesis: {
     mode: "aspect-grammar";
     sharedPatterns: Array<{
@@ -340,6 +491,47 @@ export interface StyleTraceResult {
 export interface InternalStyleTraceResult {
   sites: SiteProfile[];
   evidenceArtifactPath?: string;
+  visualVocabulary: VisualVocabulary;
+  styleInvariants: StyleInvariant[];
+  styleRisks: StyleRisk[];
+  softGuesses: SoftGuess[];
+  compositionBlueprint: CompositionBlueprintStep[];
+  variationAxes: VariationAxis[];
+  blendModes: BlendMode[];
+  promptReadyBrief: PromptReadyBrief;
+  reviewContract: ReviewContract;
+  originalityBoundary: OriginalityBoundary;
   synthesis: StyleTraceResult["synthesis"];
   guideline: StyleTraceResult["guideline"];
+}
+
+export interface ReviewGeneratedStyleInput {
+  styleResult: StyleTraceResult;
+  generatedHtml?: string;
+  generatedImageUrl?: string;
+  viewportWidth?: number;
+  viewportHeight?: number;
+}
+
+export interface ReviewGeneratedStyleResult {
+  [key: string]: unknown;
+  mode: "style-review-v1";
+  artifactType: "html" | "image";
+  viewport: {
+    width: number;
+    height: number;
+  };
+  matchedInvariants: Array<{
+    id: string;
+    rule: string;
+    confidence: Confidence;
+  }>;
+  violatedConstraints: Array<{
+    id: string;
+    rule: string;
+    severity: "high" | "medium" | "low";
+    reason: string;
+  }>;
+  driftNotes: string[];
+  confidence: Confidence;
 }

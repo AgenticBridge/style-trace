@@ -3,11 +3,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { ZodError } from "zod";
 import { analyzeWebsiteStyle } from "./analysis/analyzeStyle.js";
-import { inputSchema, outputSchema } from "./core/schema.js";
+import { reviewGeneratedStyle } from "./analysis/reviewGeneratedStyle.js";
+import { inputSchema, outputSchema, reviewInputSchema, reviewOutputSchema } from "./core/schema.js";
+import type { ReviewGeneratedStyleInput } from "./core/types.js";
 
 const server = new McpServer({
   name: "style-trace",
-  version: "0.4.0",
+  version: "0.5.0",
 });
 
 server.registerTool(
@@ -26,6 +28,37 @@ server.registerTool(
     try {
       const result = await analyzeWebsiteStyle(args);
       const text = `StyleTrace result ready in structuredContent for ${result.sites.length} site(s).`;
+
+      return {
+        content: [{ type: "text", text }],
+        structuredContent: result,
+      };
+    } catch (error) {
+      const message = formatError(error);
+      return {
+        content: [{ type: "text", text: message }],
+        isError: true,
+      };
+    }
+  },
+);
+
+server.registerTool(
+  "review_generated_style",
+  {
+    title: "Review generated style",
+    description: "Review generated HTML or a generated image URL against a StyleTrace result, checking invariant matches, drift, and likely style violations.",
+    inputSchema: reviewInputSchema,
+    outputSchema: reviewOutputSchema,
+    annotations: {
+      readOnlyHint: true,
+      idempotentHint: false,
+    },
+  },
+  async (args) => {
+    try {
+      const result = await reviewGeneratedStyle(args as ReviewGeneratedStyleInput);
+      const text = `Style review ready in structuredContent for ${result.artifactType} artifact.`;
 
       return {
         content: [{ type: "text", text }],
