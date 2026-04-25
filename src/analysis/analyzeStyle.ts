@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { InputPayload } from "../core/schema.js";
 import { buildSiteAnalysisResult, capturePageSnapshot, dismissConsentOverlays } from "./pageAnalysis.js";
+import { analyzeHtmlReference } from "./htmlReferenceAnalysis.js";
 import { analyzeImageReference } from "./imageReferenceAnalysis.js";
 import { captureVisualEvidence } from "./screenshotCapture.js";
 import { synthesizeResult } from "./synthesis.js";
@@ -20,11 +21,13 @@ export async function analyzeWebsiteStyle(input: InputPayload): Promise<StyleTra
       sites.push(
         reference.type === "url"
           ? await analyzePage(browser, reference.value, runId)
-          : await analyzeImageReference(browser, reference.value, runId),
+          : reference.type === "html"
+            ? await analyzeHtmlReference(browser, reference.value, runId)
+            : await analyzeImageReference(browser, reference.value, runId, reference.type),
       );
     }
 
-    const fullResult = synthesizeResult(sites, normalized.synthesisMode);
+    const fullResult = synthesizeResult(sites, normalized);
     const evidenceArtifactPath = normalized.evidenceMode === "file"
       ? await writeEvidenceArtifact(fullResult, runId)
       : undefined;
@@ -54,7 +57,7 @@ async function analyzePage(
 
     const snapshots = [await capturePageSnapshot(page)];
 
-    const { pageEvidence, capturedPages, designGrammar } = buildSiteAnalysisResult(snapshots);
+    const { pageEvidence, capturedPages, signals, designGrammar } = buildSiteAnalysisResult(snapshots);
     const capturedPagesWithVisuals = await Promise.all(capturedPages.map(async (capturedPage, index) => ({
       ...capturedPage,
       visualCaptures: await captureVisualEvidence({
@@ -72,6 +75,7 @@ async function analyzePage(
       pagesAnalyzed: snapshots.map((snapshot) => snapshot.path || new URL(snapshot.url).pathname || "/"),
       pageEvidence,
       capturedPages: capturedPagesWithVisuals,
+      derivedSignals: signals,
       designGrammar,
     };
   } finally {

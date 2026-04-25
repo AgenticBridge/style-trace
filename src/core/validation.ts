@@ -1,5 +1,5 @@
 import type { InputPayload } from "./schema.js";
-import type { EvidenceMode, NormalizedInput, ReferenceType, SynthesisMode } from "./types.js";
+import type { EvidenceMode, Fidelity, NormalizedInput, ReferenceType, SynthesisMode, TargetArtifact } from "./types.js";
 
 const localHostnames = new Set(["localhost", "0.0.0.0", "127.0.0.1", "::1"]);
 
@@ -9,7 +9,7 @@ export function normalizeInput(input: InputPayload): NormalizedInput {
     ...(input.references ?? []),
   ].map((reference) => ({
     type: reference.type,
-    value: reference.type === "url" ? normalizePublicUrl(reference.value) : normalizePublicImageUrl(reference.value),
+    value: normalizeReferenceValue(reference.type, reference.value),
   })));
 
   if (references.length === 0) {
@@ -20,6 +20,9 @@ export function normalizeInput(input: InputPayload): NormalizedInput {
     references,
     synthesisMode: resolveSynthesisMode(references.length),
     evidenceMode: resolveEvidenceMode(input.evidenceMode),
+    targetArtifact: resolveTargetArtifact(input.targetArtifact),
+    fidelity: resolveFidelity(input.fidelity),
+    ...(input.designIntent ? { designIntent: input.designIntent.trim() } : {}),
   };
 }
 
@@ -29,6 +32,14 @@ function resolveSynthesisMode(urlCount: number): SynthesisMode {
 
 function resolveEvidenceMode(override: EvidenceMode | undefined): EvidenceMode {
   return override ?? "omit";
+}
+
+function resolveTargetArtifact(override: TargetArtifact | undefined): TargetArtifact {
+  return override ?? "landing-page";
+}
+
+function resolveFidelity(override: Fidelity | undefined): Fidelity {
+  return override ?? "high";
 }
 
 export function normalizePublicUrl(rawValue: string): string {
@@ -53,6 +64,27 @@ export function normalizePublicImageUrl(rawValue: string): string {
   }
 
   return parsed.toString();
+}
+
+function normalizeReferenceValue(type: ReferenceType, value: string): string {
+  if (type === "url") {
+    return normalizePublicUrl(value);
+  }
+  if (type === "image" || type === "screenshot") {
+    return normalizePublicImageUrl(value);
+  }
+  return normalizeHtmlSnippet(value);
+}
+
+function normalizeHtmlSnippet(rawValue: string): string {
+  const value = rawValue.trim();
+  if (!value) {
+    throw new Error("HTML snippets must be non-empty strings.");
+  }
+  if (value.length > 200_000) {
+    throw new Error("HTML snippets must be 200000 characters or shorter.");
+  }
+  return value;
 }
 
 function normalizePublicHttpUrl(rawValue: string): URL {

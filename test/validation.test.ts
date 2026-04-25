@@ -15,6 +15,8 @@ test("normalizeInput applies defaults and deduplicates URLs", () => {
   assert.deepEqual(normalized.references, [{ type: "url", value: "https://example.com/" }]);
   assert.equal(normalized.synthesisMode, "single-site-profile");
   assert.equal(normalized.evidenceMode, "omit");
+  assert.equal(normalized.targetArtifact, "landing-page");
+  assert.equal(normalized.fidelity, "high");
 });
 
 test("normalizeInput defaults to cross-site synthesis for multiple URLs", () => {
@@ -46,6 +48,26 @@ test("normalizeInput accepts mixed url and image references", () => {
   assert.equal(normalized.synthesisMode, "cross-site-commonality");
 });
 
+test("normalizeInput accepts screenshot and html references with target shaping", () => {
+  const normalized = normalizeInput({
+    references: [
+      { type: "screenshot", value: "https://cdn.example.com/reference.png#fragment" },
+      { type: "html", value: "<main><section><h1>Hero</h1></section></main>" },
+    ],
+    targetArtifact: "product-ui",
+    fidelity: "medium",
+    designIntent: "preserve layout discipline",
+  });
+
+  assert.deepEqual(normalized.references, [
+    { type: "screenshot", value: "https://cdn.example.com/reference.png" },
+    { type: "html", value: "<main><section><h1>Hero</h1></section></main>" },
+  ]);
+  assert.equal(normalized.targetArtifact, "product-ui");
+  assert.equal(normalized.fidelity, "medium");
+  assert.equal(normalized.designIntent, "preserve layout discipline");
+});
+
 test("normalizePublicImageUrl rejects non-image paths", () => {
   assert.throws(() => normalizePublicImageUrl("https://example.com/reference"), /image URL/i);
 });
@@ -69,6 +91,19 @@ test("inputSchema accepts mixed references input", () => {
   });
 
   assert.equal(parsed.references?.length, 2);
+});
+
+test("inputSchema accepts target-aware synthesis fields", () => {
+  const parsed = inputSchema.parse({
+    urls: ["https://example.com"],
+    targetArtifact: "prototype",
+    fidelity: "low",
+    designIntent: "explore structure only",
+  });
+
+  assert.equal(parsed.targetArtifact, "prototype");
+  assert.equal(parsed.fidelity, "low");
+  assert.equal(parsed.designIntent, "explore structure only");
 });
 
 test("inputSchema rejects synthesisMode as a public input", () => {

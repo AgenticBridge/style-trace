@@ -1,9 +1,9 @@
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import type { Browser, Page } from "playwright";
-import type { CapturedPage, DesignAspect, SiteDesignGrammar, SiteProfile, VisualCapture, VisualModule } from "../core/types.js";
+import type { CapturedPage, DerivedDesignSignals, DesignAspect, ReferenceType, SiteDesignGrammar, SiteProfile, VisualCapture, VisualModule } from "../core/types.js";
 
-export async function analyzeImageReference(browser: Browser, imageUrl: string, runId: string): Promise<SiteProfile> {
+export async function analyzeImageReference(browser: Browser, imageUrl: string, runId: string, sourceType: Extract<ReferenceType, "image" | "screenshot"> = "image"): Promise<SiteProfile> {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 
   try {
@@ -42,16 +42,22 @@ export async function analyzeImageReference(browser: Browser, imageUrl: string, 
     const stats = await sampleImageStats(context.newPage.bind(context), screenshotBuffer.toString("base64"));
     const capturedPage = buildCapturedPage(imageBox, fullPagePath, heroPath);
 
-    return buildImageReferenceProfile(imageUrl, stats, capturedPage);
+    return buildImageReferenceProfile(imageUrl, stats, capturedPage, sourceType);
   } finally {
     await context.close();
   }
 }
 
-export function buildImageReferenceProfile(imageUrl: string, stats: ImageStats, capturedPage: CapturedPage): SiteProfile {
+export function buildImageReferenceProfile(
+  imageUrl: string,
+  stats: ImageStats,
+  capturedPage: CapturedPage,
+  sourceType: Extract<ReferenceType, "image" | "screenshot"> = "image",
+): SiteProfile {
+  const derivedSignals = buildImageDerivedSignals(stats);
   return {
     url: imageUrl,
-    sourceType: "image",
+    sourceType,
     pagesAnalyzed: ["/image-reference"],
     pageEvidence: [
       {
@@ -62,6 +68,7 @@ export function buildImageReferenceProfile(imageUrl: string, stats: ImageStats, 
       },
     ],
     capturedPages: [capturedPage],
+    derivedSignals,
     designGrammar: buildImageDesignGrammar(imageUrl, stats, capturedPage),
   };
 }
@@ -448,4 +455,67 @@ interface ImageBox {
   y: number;
   width: number;
   height: number;
+}
+
+function buildImageDerivedSignals(stats: ImageStats): DerivedDesignSignals {
+  return {
+    colors: {
+      backgroundMode: stats.darkRatio > 0.55 ? "dark" : stats.lightRatio > 0.55 ? "light" : "mixed",
+      accentCount: Math.max(1, Math.min(4, Math.round(stats.paletteBucketCount / 10))),
+      contrast: stats.darkRatio > 0.5 || stats.lightRatio > 0.5 ? "high" : stats.averageLightness >= 0.35 && stats.averageLightness <= 0.7 ? "medium" : "low",
+      paletteRestraint: stats.paletteBucketCount <= 18 ? "restrained" : stats.paletteBucketCount <= 32 ? "moderate" : "varied",
+    },
+    typography: {
+      headingStyle: "unknown from image-only reference",
+      bodyStyle: "unknown from image-only reference",
+      scale: "unknown from image-only reference",
+      families: [],
+    },
+    layout: {
+      density: stats.whitespaceRatio > 0.3 ? "airy" : stats.whitespaceRatio > 0.16 ? "balanced" : "dense",
+      sectionRhythm: stats.whitespaceRatio > 0.3 ? "open visual cadence" : "single-frame composition",
+      structure: ["hero"],
+      contentWidth: describeAspectRatio(stats.aspectRatio),
+    },
+    imagery: {
+      iconDensity: "low",
+      photoPresence: stats.edgeDensity > 0.18 ? "high" : "medium",
+      illustrationPresence: stats.vividRatio > 0.22 ? "medium" : "low",
+      videoPresence: "none",
+    },
+    motion: {
+      motionLevel: "restrained",
+      stickyLevel: "none",
+      hoverEmphasis: "subtle",
+    },
+    forms: {
+      fieldStyle: "none",
+    },
+    components: {
+      nav: "unknown from image-only reference",
+      buttons: "unknown from image-only reference",
+      ctaPresence: "CTA presence cannot be inferred from a static image reference",
+      footer: "unknown from image-only reference",
+    },
+    reproduction: {
+      header: {
+        navDensity: "minimal",
+        ctaPattern: "none",
+      },
+      hero: {
+        headingScale: "moderate",
+        ctaPattern: "none",
+        mediaStyle: stats.edgeDensity > 0.18 ? "immersive-media" : "split-media",
+        proofNearTop: false,
+      },
+      buttons: {
+        radius: "soft",
+        emphasis: "mixed",
+        size: "comfortable",
+      },
+      commerce: {
+        pricingPresence: "none",
+      },
+    },
+  };
 }

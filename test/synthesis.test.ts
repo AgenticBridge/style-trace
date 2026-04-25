@@ -1,7 +1,26 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { synthesizeResult } from "../src/analysis/synthesis.js";
-import type { SiteProfile } from "../src/core/types.js";
+import type { NormalizedInput, SiteProfile } from "../src/core/types.js";
+
+const crossSiteInput: NormalizedInput = {
+  references: [
+    { type: "url", value: "https://alpha.example" },
+    { type: "url", value: "https://beta.example" },
+  ],
+  synthesisMode: "cross-site-commonality",
+  evidenceMode: "omit",
+  targetArtifact: "landing-page",
+  fidelity: "high",
+};
+
+const singleSiteInput: NormalizedInput = {
+  references: [{ type: "url", value: "https://alpha.example" }],
+  synthesisMode: "single-site-profile",
+  evidenceMode: "omit",
+  targetArtifact: "landing-page",
+  fidelity: "high",
+};
 
 const siteA: SiteProfile = {
   url: "https://alpha.example",
@@ -24,6 +43,21 @@ const siteA: SiteProfile = {
     },
     visualCaptures: [],
   }],
+  derivedSignals: {
+    colors: { backgroundMode: "light", accentCount: 1, contrast: "high", paletteRestraint: "restrained" },
+    typography: { headingStyle: "bold sans", bodyStyle: "neutral sans", scale: "large", families: ["Inter", "sans-serif"] },
+    layout: { density: "airy", sectionRhythm: "editorial cadence", structure: ["hero", "proof", "features", "cta"], contentWidth: "standard marketing container" },
+    imagery: { iconDensity: "medium", photoPresence: "medium", illustrationPresence: "low", videoPresence: "none" },
+    motion: { motionLevel: "restrained", stickyLevel: "light", hoverEmphasis: "clear" },
+    forms: { fieldStyle: "outlined" },
+    components: { nav: "simple top nav", buttons: "soft rounded, solid primary", ctaPresence: "single clear primary CTA per page", footer: "dense footer" },
+    reproduction: {
+      header: { navDensity: "minimal", ctaPattern: "single-primary" },
+      hero: { headingScale: "large", ctaPattern: "single-primary", mediaStyle: "split-media", proofNearTop: true },
+      buttons: { radius: "soft", emphasis: "solid", size: "comfortable" },
+      commerce: { pricingPresence: "section" },
+    },
+  },
   designGrammar: {
     model: "ten-aspect-v1",
     visualHierarchy: { summary: "Dominant first-screen hierarchy with split hero composition.", observations: ["Hero balance is balanced."], evidencePaths: ["/"], confidence: "high" },
@@ -71,6 +105,21 @@ const siteB: SiteProfile = {
     },
     visualCaptures: [],
   }],
+  derivedSignals: {
+    colors: { backgroundMode: "dark", accentCount: 3, contrast: "medium", paletteRestraint: "varied" },
+    typography: { headingStyle: "medium serif", bodyStyle: "compact serif", scale: "compact", families: ["Georgia", "serif"] },
+    layout: { density: "dense", sectionRhythm: "tight product cadence", structure: ["hero", "pricing"], contentWidth: "compact container" },
+    imagery: { iconDensity: "low", photoPresence: "low", illustrationPresence: "low", videoPresence: "none" },
+    motion: { motionLevel: "restrained", stickyLevel: "none", hoverEmphasis: "subtle" },
+    forms: { fieldStyle: "none" },
+    components: { nav: "expanded top nav", buttons: "sharp, mixed emphasis", ctaPresence: "CTA present but visually restrained", footer: "minimal footer" },
+    reproduction: {
+      header: { navDensity: "expanded", ctaPattern: "multiple-primary" },
+      hero: { headingScale: "compact", ctaPattern: "none", mediaStyle: "text-only", proofNearTop: false },
+      buttons: { radius: "sharp", emphasis: "mixed", size: "compact" },
+      commerce: { pricingPresence: "page" },
+    },
+  },
   designGrammar: {
     model: "ten-aspect-v1",
     visualHierarchy: { summary: "Understated first-screen hierarchy with left-led hero composition.", observations: ["Hero balance resolves as copy-led."], evidencePaths: ["/"], confidence: "high" },
@@ -98,7 +147,7 @@ const siteB: SiteProfile = {
 };
 
 test("synthesizeResult preserves distinctive signatures in cross-site mode", () => {
-  const result = synthesizeResult([siteA, siteB], "cross-site-commonality");
+  const result = synthesizeResult([siteA, siteB], crossSiteInput);
 
   assert.equal(result.synthesis.mode, "aspect-grammar");
   assert.equal(result.synthesis.referenceSignatures.length, 2);
@@ -108,13 +157,22 @@ test("synthesizeResult preserves distinctive signatures in cross-site mode", () 
   assert.match(result.guideline.rules[0]?.rule ?? "", /visual hierarchy|color architecture|navigation logic/i);
   assert.ok(!result.synthesis.sharedPatterns.some((pattern) => pattern.aspect === "microInteractions"));
   assert.ok(!result.synthesis.sharedPatterns.some((pattern) => pattern.aspect === "responsiveBreakpoints"));
+  assert.ok(result.styleInvariants.length > 0);
+  assert.ok(result.styleRisks.some((risk) => /generic/i.test(risk.risk)));
+  assert.ok(result.blendModes.some((mode) => mode.mode === "contrast-set"));
+  assert.ok(result.variationAxes.length > 0);
+  assert.equal(result.promptReadyBrief.targetArtifact, "landing-page");
 });
 
 test("synthesizeResult honors single-site mode by centering one reference grammar", () => {
-  const result = synthesizeResult([siteA, siteB], "single-site-profile");
+  const result = synthesizeResult([siteA, siteB], singleSiteInput);
 
   assert.equal(result.synthesis.referenceSignatures.length, 1);
   assert.equal(result.synthesis.referenceSignatures[0]?.siteUrl, "https://alpha.example");
   assert.match(result.synthesis.blendStrategy.headline, /lead reference|Preserve the lead reference/i);
   assert.ok(result.synthesis.blendStrategy.directives.some((directive) => directive.includes("visualHierarchy") || directive.includes("split-media") || directive.includes("Large headline")));
+  assert.equal(result.blendModes[0]?.mode, "lead-reference");
+  assert.deepEqual(result.variationAxes, []);
+  assert.ok(result.reviewContract.mustMatch.length > 0);
+  assert.ok(result.compositionBlueprint.some((step) => step.module === "hero"));
 });

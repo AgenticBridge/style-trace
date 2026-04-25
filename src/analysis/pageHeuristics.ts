@@ -26,6 +26,7 @@ interface RgbColor {
 export function buildSiteAnalysisResult(snapshots: PageSnapshot[]): {
   pageEvidence: PageEvidence[];
   capturedPages: import("../core/types.js").CapturedPage[];
+  signals: DerivedDesignSignals;
   designGrammar: SiteDesignGrammar;
 } {
   const backgroundModes = snapshots.map((snapshot) => guessBackgroundMode(snapshot.bodyBackgroundColor));
@@ -89,6 +90,20 @@ export function buildSiteAnalysisResult(snapshots: PageSnapshot[]): {
       structure: mergedStructure,
       contentWidth,
     },
+    imagery: {
+      iconDensity: classifyPresence(average(snapshots.map((snapshot) => snapshot.imagerySignals.iconCount)), [3, 8]),
+      photoPresence: classifyPresence(average(snapshots.map((snapshot) => snapshot.imagerySignals.photoLikeMediaCount)), [1, 4]),
+      illustrationPresence: classifyPresence(average(snapshots.map((snapshot) => snapshot.imagerySignals.illustrationLikeCount)), [1, 3]),
+      videoPresence: average(snapshots.map((snapshot) => snapshot.imagerySignals.videoCount)) >= 0.5 ? "present" : "none",
+    },
+    motion: {
+      motionLevel: classifyMotionLevel(snapshots),
+      stickyLevel: classifyStickyLevel(snapshots),
+      hoverEmphasis: classifyHoverEmphasis(snapshots),
+    },
+    forms: {
+      fieldStyle: mostCommon(snapshots.map((snapshot) => snapshot.formSignals.fieldStyle)) ?? "none",
+    },
     components: {
       nav: navSummary,
       buttons: buttonSummary,
@@ -127,6 +142,7 @@ export function buildSiteAnalysisResult(snapshots: PageSnapshot[]): {
   return {
     pageEvidence,
     capturedPages,
+    signals,
     designGrammar,
   };
 }
@@ -212,6 +228,49 @@ function summarizeHeroMediaStyle(snapshots: PageSnapshot[]): "text-only" | "spli
   });
 
   return mostCommon(styles) ?? "text-only";
+}
+
+function classifyPresence(value: number, thresholds: [number, number]): "low" | "medium" | "high" {
+  if (value >= thresholds[1]) {
+    return "high";
+  }
+  if (value >= thresholds[0]) {
+    return "medium";
+  }
+  return "low";
+}
+
+function classifyMotionLevel(snapshots: PageSnapshot[]): "restrained" | "moderate" | "active" {
+  const averageMotion = average(snapshots.map((snapshot) => snapshot.interactionSignals.animatedElementCount + snapshot.interactionSignals.transitionElementCount));
+  if (averageMotion >= 12) {
+    return "active";
+  }
+  if (averageMotion >= 4) {
+    return "moderate";
+  }
+  return "restrained";
+}
+
+function classifyStickyLevel(snapshots: PageSnapshot[]): "none" | "light" | "strong" {
+  const stickyCount = average(snapshots.map((snapshot) => snapshot.interactionSignals.stickyElementCount));
+  if (stickyCount >= 2) {
+    return "strong";
+  }
+  if (stickyCount >= 0.5) {
+    return "light";
+  }
+  return "none";
+}
+
+function classifyHoverEmphasis(snapshots: PageSnapshot[]): "subtle" | "clear" | "strong" {
+  const hoverableActions = average(snapshots.map((snapshot) => snapshot.interactionSignals.hoverableActionCount));
+  if (hoverableActions >= 4) {
+    return "strong";
+  }
+  if (hoverableActions >= 1.5) {
+    return "clear";
+  }
+  return "subtle";
 }
 
 function summarizeHeroCtaPattern(stats: Array<{ heroCtaPattern: HeroCtaPattern }>): HeroCtaPattern {
