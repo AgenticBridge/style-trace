@@ -5,6 +5,7 @@ import type { InputPayload } from "../core/schema.js";
 import { buildSiteAnalysisResult, capturePageSnapshot, dismissConsentOverlays } from "./pageAnalysis.js";
 import { analyzeHtmlReference } from "./htmlReferenceAnalysis.js";
 import { analyzeImageReference } from "./imageReferenceAnalysis.js";
+import { loadAndSettlePage } from "./pageReadiness.js";
 import { captureVisualEvidence } from "./screenshotCapture.js";
 import { synthesizeResult } from "./synthesis.js";
 import type { DesignAspect, DesignAspectKey, InternalStyleTraceResult, PublicSiteProfile, SiteProfile, SiteDesignGrammar, StyleTraceResult } from "../core/types.js";
@@ -84,8 +85,7 @@ async function analyzePage(
 }
 
 async function loadPage(page: import("playwright").Page, url: string): Promise<void> {
-  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45_000 });
-  await page.waitForLoadState("networkidle", { timeout: 5_000 }).catch(() => undefined);
+  await loadAndSettlePage(page, url, { dismissOverlays: dismissConsentOverlays });
 }
 
 async function writeEvidenceArtifact(result: InternalStyleTraceResult, runId: string): Promise<string> {

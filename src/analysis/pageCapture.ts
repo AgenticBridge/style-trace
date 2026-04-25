@@ -1,5 +1,6 @@
 import type { Page } from "playwright";
 import type { PageSnapshot } from "../core/types.js";
+import { settleLoadedPage } from "./pageReadiness.js";
 
 export async function dismissConsentOverlays(page: Page): Promise<void> {
   const selectors = [
@@ -376,8 +377,7 @@ async function captureResponsiveProbe(page: Page): Promise<PageSnapshot["respons
   const originalViewport = page.viewportSize() ?? { width: 1440, height: 900 };
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload({ waitUntil: "domcontentloaded", timeout: 45_000 });
-  await page.waitForLoadState("networkidle", { timeout: 5_000 }).catch(() => undefined);
-  await dismissConsentOverlays(page);
+  await settleLoadedPage(page, { dismissOverlays: dismissConsentOverlays });
   const probe = await page.evaluate(() => {
     const toNumber = (value: string) => Number.parseFloat(value) || 0;
     const navLinks = Array.from(document.querySelectorAll("nav a[href], header a[href]"))
@@ -409,8 +409,7 @@ async function captureResponsiveProbe(page: Page): Promise<PageSnapshot["respons
   });
   await page.setViewportSize(originalViewport);
   await page.reload({ waitUntil: "domcontentloaded", timeout: 45_000 });
-  await page.waitForLoadState("networkidle", { timeout: 5_000 }).catch(() => undefined);
-  await dismissConsentOverlays(page);
+  await settleLoadedPage(page, { dismissOverlays: dismissConsentOverlays });
   return {
     ...probe,
     navCollapseRatio: Number((probe.mobileNavLinkCount / Math.max(1, 8)).toFixed(2)),
