@@ -333,7 +333,6 @@ export const outputSchema = z.object({
 });
 
 export type InputPayload = z.infer<typeof inputSchema>;
-export type OutputPayload = z.infer<typeof outputSchema>;
 
 export const reviewInputSchema = z.object({
   styleResult: outputSchema,

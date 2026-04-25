@@ -1,6 +1,6 @@
 {
   "name": "@agenticbridge/style-trace",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Playwright-based MCP server that extracts evidence-first website style signals.",
   "type": "module",
   "files": [
