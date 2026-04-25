@@ -9,7 +9,7 @@ import type { ReviewGeneratedStyleInput } from "./core/types.js";
 
 const server = new McpServer({
   name: "style-trace",
-  version: "0.4.0",
+  version: "0.5.0",
 });
 
 server.registerTool(
