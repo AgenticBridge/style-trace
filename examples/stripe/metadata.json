@@ -1,0 +1,6 @@
+{
+  "datetime_generated": "2026-04-25T05:44:05.157Z",
+  "referenced_website_url": "https://stripe.com/",
+  "style_trace_version": "0.5.1",
+  "prompt": "Iterate 5 times with 5 different famous websites, use the style-tracer mcp to reference 1 website each time, mimic the reference website style for designing a homepage for this project \"https://github.com/AgenticBridge/style-trace\" in simple html.\nYou need to save the artifacts in ../style-trace/examples/, open sub folders for each reference website, include the generated html, screenshot of the referenced website, and a metadata json file containing the following information:\n- datetime generated\n- referenced website url\n- style-trace version\n- prompt (this prompt)"
+}

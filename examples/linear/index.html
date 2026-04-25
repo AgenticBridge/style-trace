@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Style Trace</title>
+<style>
+  :root {
+    --bg: #050608;
+    --panel: #0a0c10;
+    --panel-2: #0e1117;
+    --line: rgba(255,255,255,0.09);
+    --line-strong: rgba(255,255,255,0.15);
+    --text: #f5f7fb;
+    --muted: #9097a7;
+    --soft: #677084;
+    --accent: #7c8cff;
+    --accent-2: #8ff0d2;
+    --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 32px 80px rgba(0,0,0,0.45);
+    --max: 1280px;
+    --radius: 0px;
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(124,140,255,0.10), transparent 22%),
+      radial-gradient(circle at 18% 78%, rgba(143,240,210,0.06), transparent 24%),
+      var(--bg);
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  .shell { width: min(calc(100% - 48px), var(--max)); margin: 0 auto; }
+
+  .nav-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(18px);
+    background: rgba(5,6,8,0.72);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .nav {
+    min-height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .brand-mark {
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: inset 0 0 0 3px var(--bg);
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .nav-links a:hover,
+  .ghost-link:hover { color: var(--text); }
+
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    color: var(--text);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .nav-cta .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 6px rgba(124,140,255,0.12);
+  }
+
+  .hero {
+    padding: 72px 0 0;
+  }
+
+  .hero-copy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: 56px;
+  }
+
+  h1 {
+    margin: 0;
+    max-width: 900px;
+    font-size: clamp(56px, 8vw, 88px);
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+    font-weight: 500;
+  }
+
+  .lede {
+    margin: 28px 0 0;
+    max-width: 680px;
+    font-size: 29px;
+    line-height: 1.22;
+    letter-spacing: -0.035em;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .hero-side {
+    align-self: center;
+    justify-self: end;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .hero-side a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #d8dbe2;
+  }
+
+  .hero-side .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 6px rgba(124,140,255,0.10);
+  }
+
+  .hero-frame {
+    position: relative;
+    border: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .hero-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.05), transparent 20%),
+      radial-gradient(circle at 75% 0%, rgba(124,140,255,0.14), transparent 30%);
+    pointer-events: none;
+  }
+
+  .product {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr) 300px;
+    min-height: 700px;
+  }
+
+  .rail, .canvas, .inspect {
+    position: relative;
+    min-height: 700px;
+  }
+
+  .rail {
+    border-right: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0));
+    padding: 18px 14px 16px;
+  }
+
+  .canvas {
+    border-right: 1px solid var(--line);
+    padding: 18px 28px 22px;
+  }
+
+  .inspect {
+    padding: 18px 20px 22px;
+  }
+
+  .window-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--soft);
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .toolbar .btn {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .rail-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text);
+    font-size: 16px;
+    margin-bottom: 18px;
+  }
+
+  .rail-group {
+    margin: 18px 0 26px;
+  }
+
+  .rail-label {
+    color: var(--soft);
+    font-size: 12px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .rail-item,
+  .rail-item-active {
+    padding: 10px 12px;
+    color: var(--muted);
+    font-size: 14px;
+    border: 1px solid transparent;
+    margin-bottom: 4px;
+  }
+
+  .rail-item-active {
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.05);
+  }
+
+  .canvas-card {
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.018);
+    padding: 22px 22px 18px;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow {
+    color: var(--accent-2);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 14px;
+  }
+
+  .canvas h2 {
+    margin: 0 0 14px;
+    font-size: clamp(34px, 4.5vw, 52px);
+    line-height: 1.02;
+    letter-spacing: -0.05em;
+    font-weight: 500;
+    max-width: 620px;
+  }
+
+  .canvas p {
+    margin: 0 0 24px;
+    max-width: 620px;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .metric {
+    border: 1px solid var(--line);
+    padding: 16px;
+    min-height: 92px;
+    background: rgba(0,0,0,0.12);
+  }
+
+  .metric .k {
+    color: var(--soft);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .metric .v {
+    font-size: 24px;
+    letter-spacing: -0.04em;
+  }
+
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .step {
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.016);
+    padding: 14px;
+    min-height: 120px;
+  }
+
+  .step .n {
+    color: var(--soft);
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .step strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .step span {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .inspect-card {
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.015);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .inspect-label {
+    color: var(--soft);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .inspect-value {
+    font-size: 15px;
+    color: #d8dbe2;
+    line-height: 1.55;
+  }
+
+  .inspect-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .inspect-pill {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .inspect-pill:first-child { border-top: 0; padding-top: 0; }
+
+  .section {
+    padding: 120px 0;
+  }
+
+  .section-panel {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 34px;
+  }
+
+  .section-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+    gap: 42px;
+    align-items: start;
+  }
+
+  .section h3 {
+    margin: 0 0 18px;
+    max-width: 720px;
+    font-size: clamp(38px, 5vw, 58px);
+    line-height: 1.02;
+    letter-spacing: -0.05em;
+    font-weight: 500;
+  }
+
+  .section-copy p {
+    margin: 0;
+    max-width: 720px;
+    color: var(--muted);
+    font-size: 19px;
+    line-height: 1.65;
+  }
+
+  .stack {
+    display: grid;
+    gap: 12px;
+  }
+
+  .stack-card {
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.018);
+    padding: 18px;
+  }
+
+  .stack-card strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .stack-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .ledger {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 18px;
+    padding: 18px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .ledger-row:first-child { border-top: 0; }
+  .ledger-row strong {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+  }
+
+  .ledger-row span {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .proof-board {
+    border: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    overflow: hidden;
+  }
+
+  .proof-head {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr 0.8fr;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--soft);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .proof-head div,
+  .proof-row div {
+    padding: 14px 16px;
+  }
+
+  .proof-row {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr 0.8fr;
+    gap: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .proof-row:last-child { border-bottom: 0; }
+
+  .proof-row .name {
+    font-size: 15px;
+    color: #eff2f8;
+  }
+
+  .proof-row .state,
+  .proof-row .out {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .state i {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
+    border-radius: 999px;
+    background: var(--accent-2);
+    vertical-align: middle;
+  }
+
+  .cta-block {
+    padding: 132px 0 120px;
+    text-align: center;
+  }
+
+  .cta-block .eyebrow {
+    margin-bottom: 18px;
+  }
+
+  .cta-block h4 {
+    margin: 0 auto 18px;
+    max-width: 920px;
+    font-size: clamp(42px, 6vw, 74px);
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+    font-weight: 500;
+  }
+
+  .cta-block p {
+    margin: 0 auto 30px;
+    max-width: 740px;
+    color: var(--muted);
+    font-size: 20px;
+    line-height: 1.6;
+  }
+
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--line-strong);
+    background: rgba(255,255,255,0.04);
+    padding: 14px 18px;
+    color: var(--text);
+    font-size: 15px;
+  }
+
+  .ghost-link {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  footer {
+    padding: 0 0 36px;
+  }
+
+  .footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 22px;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    color: var(--soft);
+    font-size: 13px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 1100px) {
+    .hero-copy,
+    .section-grid,
+    .product,
+    .proof-head,
+    .proof-row {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-side {
+      justify-self: start;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .product {
+      min-height: auto;
+    }
+
+    .rail,
+    .canvas,
+    .inspect {
+      min-height: auto;
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .inspect { border-bottom: 0; }
+    .proof-head { display: none; }
+
+    .proof-row {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 8px 0;
+    }
+
+    .proof-row div {
+      padding: 6px 16px;
+    }
+
+    .metric-row,
+    .flow {
+      grid-template-columns: 1fr;
+    }
+
+    .ledger-row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .shell {
+      width: min(calc(100% - 28px), var(--max));
+    }
+
+    .nav {
+      min-height: 72px;
+    }
+
+    .hero {
+      padding-top: 40px;
+    }
+
+    .section,
+    .cta-block {
+      padding-top: 86px;
+      padding-bottom: 86px;
+    }
+
+    .lede {
+      font-size: 20px;
+    }
+
+    .canvas,
+    .rail,
+    .inspect {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="nav-wrap">
+    <div class="shell nav">
+      <a class="brand" href="#top" aria-label="Style Trace home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Style Trace</span>
+      </a>
+      <div class="nav-links">
+        <a href="#grammar">Grammar</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#review">Review</a>
+      </div>
+      <a class="nav-cta" href="https://github.com/AgenticBridge/style-trace">
+        <span class="dot" aria-hidden="true"></span>
+        <span>View repository</span>
+      </a>
+    </div>
+  </div>
+
+  <main id="top">
+    <section class="hero">
+      <div class="shell">
+        <div class="hero-copy">
+          <div>
+            <h1>Extract the visual grammar of a product site before you rebuild it.</h1>
+            <p class="lede">Style Trace is an MCP server that opens real pages in Playwright, segments the interface, and returns a compact design brief grounded in structure, spacing, evidence, and screenshotable review output.</p>
+          </div>
+          <div class="hero-side">
+            <a href="#review">
+              <span class="dot" aria-hidden="true"></span>
+              <span>Reference-aware review for generated pages</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-frame" aria-label="Style Trace interface preview">
+          <div class="product">
+            <div class="rail">
+              <div class="rail-title">
+                <span>Run: style-trace</span>
+                <span style="color:var(--soft)">stdio</span>
+              </div>
+
+              <div class="rail-group">
+                <div class="rail-label">Inputs</div>
+                <div class="rail-item-active">https://linear.app/</div>
+                <div class="rail-item">https://example.com/</div>
+              </div>
+
+              <div class="rail-group">
+                <div class="rail-label">Outputs</div>
+                <div class="rail-item">designGrammar</div>
+                <div class="rail-item">styleInvariants</div>
+                <div class="rail-item-active">compositionBlueprint</div>
+                <div class="rail-item">reviewContract</div>
+              </div>
+
+              <div class="rail-group">
+                <div class="rail-label">Modes</div>
+                <div class="rail-item">omit</div>
+                <div class="rail-item-active">file</div>
+                <div class="rail-item">inline</div>
+              </div>
+            </div>
+
+            <div class="canvas">
+              <div class="window-top">
+                <span>analyze_website_style</span>
+                <div class="toolbar" aria-hidden="true">
+                  <span class="btn"></span>
+                  <span class="btn"></span>
+                  <span class="btn"></span>
+                </div>
+              </div>
+
+              <div class="canvas-card">
+                <div class="eyebrow">Prompt-ready brief</div>
+                <h2>Preserve hierarchy, spacing discipline, chrome visibility, and module rhythm.</h2>
+                <p>Instead of describing a site as “minimal” or “premium,” the tool returns operational constraints a regeneration workflow can actually follow: first-screen hierarchy, palette restraint, navigation logic, imagery role, and evidence-backed risks.</p>
+
+                <div class="metric-row">
+                  <div class="metric">
+                    <div class="k">Model</div>
+                    <div class="v">ten-aspect-v1</div>
+                  </div>
+                  <div class="metric">
+                    <div class="k">Evidence</div>
+                    <div class="v">screens + JSON</div>
+                  </div>
+                  <div class="metric">
+                    <div class="k">Target</div>
+                    <div class="v">reviewable HTML</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="canvas-card">
+                <div class="eyebrow">Shared pipeline</div>
+                <div class="flow">
+                  <div class="step">
+                    <div class="n">01</div>
+                    <strong>Capture</strong>
+                    <span>Load public pages, dismiss overlays, probe desktop and mobile layouts.</span>
+                  </div>
+                  <div class="step">
+                    <div class="n">02</div>
+                    <strong>Segment</strong>
+                    <span>Turn page structure into ordered modules such as hero, proof, content, CTA, and footer.</span>
+                  </div>
+                  <div class="step">
+                    <div class="n">03</div>
+                    <strong>Synthesize</strong>
+                    <span>Build a design grammar with invariants, risks, motifs, and reconstruction directives.</span>
+                  </div>
+                  <div class="step">
+                    <div class="n">04</div>
+                    <strong>Review</strong>
+                    <span>Compare generated output against a contract instead of broad aesthetic adjectives.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="inspect">
+              <div class="window-top">
+                <span>Active profile</span>
+                <span>high confidence</span>
+              </div>
+
+              <div class="inspect-card">
+                <div class="inspect-label">Visual vocabulary</div>
+                <div class="inspect-value">Dark surfaces, high contrast, moderate palette restraint, wide container, large vertical spacing, expanded chrome, dominant product imagery.</div>
+              </div>
+
+              <div class="inspect-card">
+                <div class="inspect-label">Hard invariants</div>
+                <div class="inspect-list">
+                  <div class="inspect-pill"><span>Left-led hero</span><strong>Hard</strong></div>
+                  <div class="inspect-pill"><span>Visible navigation chrome</span><strong>Hard</strong></div>
+                  <div class="inspect-pill"><span>Commerce-like module pacing</span><strong>Hard</strong></div>
+                  <div class="inspect-pill"><span>Restrained color system</span><strong>Hard</strong></div>
+                </div>
+              </div>
+
+              <div class="inspect-card">
+                <div class="inspect-label">Risk checks</div>
+                <div class="inspect-list">
+                  <div class="inspect-pill"><span>Generic SaaS drift</span><strong>Avoid</strong></div>
+                  <div class="inspect-pill"><span>Unsupported motion claims</span><strong>Avoid</strong></div>
+                  <div class="inspect-pill"><span>Rounded card overload</span><strong>Avoid</strong></div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="grammar">
+      <div class="shell section-panel">
+        <div class="section-grid">
+          <div class="section-copy">
+            <div class="eyebrow">Design grammar</div>
+            <h3>From vague taste to named constraints that can survive implementation.</h3>
+            <p>The output is organized around a ten-aspect grammar so downstream tooling can preserve the strongest signals first. Hierarchy, color architecture, spacing, imagery role, navigation logic, and responsive behavior stay legible as separate decisions instead of collapsing into one flattened style sentence.</p>
+          </div>
+          <div class="stack">
+            <div class="stack-card">
+              <strong>Evidence-first summaries</strong>
+              <p>Each aspect includes a concise summary, supporting observations, and confidence so teams know which signals are structural and which remain weaker inference.</p>
+            </div>
+            <div class="stack-card">
+              <strong>Signature motifs</strong>
+              <p>Motifs surface the memorable moves of a reference without treating every component detail as equally important.</p>
+            </div>
+            <div class="stack-card">
+              <strong>Reconstruction directives</strong>
+              <p>Operational guidance is already phrased for regeneration and review, not just for analysis.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pipeline">
+      <div class="shell section-panel">
+        <div class="section-grid">
+          <div class="section-copy">
+            <div class="eyebrow">Product flow</div>
+            <h3>One downstream path for capture, synthesis, and comparison.</h3>
+            <p>Style Trace keeps the MVP narrow. Public URLs go in. Structured design evidence comes out. That same result can power prompt construction, page regeneration, screenshot review, or a stricter contract for future scoring without splitting into separate analysis products.</p>
+          </div>
+          <div class="ledger">
+            <div class="ledger-row">
+              <strong>Playwright-backed page capture</strong>
+              <span>Real layout and screenshot context, including module candidates, actions, navigation text, and responsive probing.</span>
+            </div>
+            <div class="ledger-row">
+              <strong>Module segmentation</strong>
+              <span>Ordered visual modules such as hero, proof, pricing, content, CTA, navigation, and footer.</span>
+            </div>
+            <div class="ledger-row">
+              <strong>Synthesis modes</strong>
+              <span>Single-site profiles stay faithful to one source while cross-site runs preserve shared patterns instead of category averages.</span>
+            </div>
+            <div class="ledger-row">
+              <strong>File-based evidence</strong>
+              <span>Optional sidecar JSON and capture paths keep the public result compact while still supporting audits.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="evidence">
+      <div class="shell section-panel">
+        <div class="section-grid">
+          <div class="section-copy">
+            <div class="eyebrow">Evidence output</div>
+            <h3>Built for teams who need to inspect the reasoning, not just trust the vibe.</h3>
+            <p>The project returns reviewable artifacts that connect structural claims back to captured pages. That makes it useful for agentic generation, design QA, and editorial reconstruction work where the strongest failure mode is subtle drift into a generic template.</p>
+          </div>
+          <div class="stack">
+            <div class="stack-card">
+              <strong>promptReadyBrief</strong>
+              <p>A compact build brief with do, avoid, priorities, and target artifact guidance.</p>
+            </div>
+            <div class="stack-card">
+              <strong>compositionBlueprint</strong>
+              <p>Module-by-module preservation notes so layout balance survives adaptation.</p>
+            </div>
+            <div class="stack-card">
+              <strong>reviewContract</strong>
+              <p>Must-match rules, must-avoid risks, viewport checks, and comparison anchors for screenshot review.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="review">
+      <div class="shell section-panel">
+        <div class="eyebrow">Review surface</div>
+        <h3 style="margin:0 0 24px; max-width:820px; font-size:clamp(38px,5vw,58px); line-height:1.02; letter-spacing:-0.05em; font-weight:500;">Use the extracted contract to judge whether a generated page actually stayed on brief.</h3>
+        <div class="proof-board">
+          <div class="proof-head">
+            <div>Constraint</div>
+            <div>Status</div>
+            <div>Expected outcome</div>
+          </div>
+          <div class="proof-row">
+            <div class="name">Desktop first screen preserves left-led hierarchy and visible chrome</div>
+            <div class="state"><i></i>Must match</div>
+            <div class="out">Hero remains directional, not centered and generic</div>
+          </div>
+          <div class="proof-row">
+            <div class="name">Palette stays restrained on dark surfaces with high contrast</div>
+            <div class="state"><i></i>Must match</div>
+            <div class="out">No decorative gradient drift or accent overload</div>
+          </div>
+          <div class="proof-row">
+            <div class="name">Body rhythm keeps open pacing through proof and content sections</div>
+            <div class="state"><i></i>Must match</div>
+            <div class="out">Sections breathe instead of collapsing into stacked promo cards</div>
+          </div>
+          <div class="proof-row">
+            <div class="name">Motion and breakpoints remain subordinate to stronger evidence</div>
+            <div class="state"><i></i>Use caution</div>
+            <div class="out">No invented animation-heavy behavior</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-block">
+      <div class="shell">
+        <div class="eyebrow">Available today</div>
+        <h4>Trace a reference site, keep the real signals, and rebuild with less drift.</h4>
+        <p>Explore the local codebase, inspect the MCP server, or wire the output into your own generation and review loop. The project is designed to stay compact, operational, and easy to verify from screenshots.</p>
+        <div class="cta-actions">
+          <a class="primary" href="https://github.com/AgenticBridge/style-trace">Open the GitHub project</a>
+          <a class="ghost-link" href="#top">Return to the captured profile</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer">
+      <div>Style Trace for evidence-first website analysis</div>
+      <div class="footer-links">
+        <a href="#grammar">Grammar</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#review">Review</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

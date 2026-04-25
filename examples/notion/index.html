@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Style Trace</title>
+<style>
+  :root {
+    --bg: #111111;
+    --panel: #171717;
+    --panel-2: #1d1d1d;
+    --soft: #242424;
+    --line: #2d2d2d;
+    --text: #ece8e1;
+    --muted: #b3ada4;
+    --dim: #8b867f;
+    --accent: #d7c3a4;
+    --accent-2: #f3ede4;
+    --shadow: 0 0 0 1px rgba(255,255,255,.04), 0 18px 50px rgba(0,0,0,.28);
+    --radius: 22px;
+    --container: 1080px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  .container { width: min(var(--container), calc(100% - 32px)); margin: 0 auto; }
+
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(12px);
+    background: rgba(17,17,17,.82);
+    border-bottom: 1px solid rgba(255,255,255,.05);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 78px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: .01em;
+  }
+
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.09);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    color: var(--accent-2);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .nav-links a:hover,
+  .quiet-link:hover { color: var(--text); }
+
+  .quiet-link {
+    color: var(--dim);
+    border-bottom: 1px solid transparent;
+  }
+
+  .hero-wrap {
+    padding: 34px 0 22px;
+  }
+
+  .hero {
+    background: var(--accent-2);
+    color: #181512;
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: 30px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.08fr .92fr;
+    gap: 28px;
+    padding: 42px;
+    align-items: stretch;
+    min-height: 76vh;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #736a5f;
+    margin-bottom: 18px;
+  }
+
+  h1, h2, h3, p { margin: 0; }
+
+  h1 {
+    font-size: clamp(3rem, 7vw, 5.6rem);
+    line-height: .93;
+    letter-spacing: -.05em;
+    font-weight: 600;
+    max-width: 8.2ch;
+  }
+
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 28px;
+    padding-right: 10px;
+  }
+
+  .lede {
+    max-width: 40ch;
+    font-size: 18px;
+    line-height: 1.55;
+    color: #4d463f;
+    margin-top: 22px;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: 1px solid #1b1b1b;
+    background: #151515;
+    color: #f5f0e8;
+    font-size: 14px;
+  }
+
+  .button.alt {
+    background: transparent;
+    color: #403a34;
+    border-color: rgba(24,21,18,.16);
+  }
+
+  .button:hover { transform: translateY(-1px); }
+
+  .hero-notes {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    color: #5d554c;
+    font-size: 13px;
+  }
+
+  .hero-media {
+    display: grid;
+    gap: 14px;
+    align-content: end;
+  }
+
+  .trace-card,
+  .trace-strip,
+  .trace-pane {
+    border-radius: 22px;
+    border: 1px solid rgba(0,0,0,.08);
+    background: rgba(255,255,255,.42);
+  }
+
+  .trace-card {
+    padding: 18px;
+    min-height: 360px;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 14px;
+  }
+
+  .trace-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #5a534b;
+    font-size: 13px;
+  }
+
+  .trace-url {
+    max-width: 56%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 7px 10px;
+    border: 1px solid rgba(0,0,0,.08);
+    color: #4c453e;
+    background: rgba(255,255,255,.55);
+    font-size: 12px;
+  }
+
+  .stack {
+    display: grid;
+    gap: 8px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+    align-items: start;
+    border-top: 1px solid rgba(0,0,0,.06);
+    padding-top: 10px;
+    font-size: 13px;
+    color: #4f4840;
+  }
+
+  .row strong {
+    font-weight: 600;
+    color: #1b1714;
+  }
+
+  .mini-modules {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .mini-modules span {
+    display: block;
+    padding: 10px 8px;
+    border-radius: 14px;
+    background: rgba(17,17,17,.06);
+    color: #312c27;
+    font-size: 11px;
+    text-align: center;
+  }
+
+  .trace-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .trace-pane {
+    padding: 12px;
+    min-height: 110px;
+  }
+
+  .trace-pane h3 {
+    font-size: 13px;
+    color: #62584e;
+    margin-bottom: 8px;
+  }
+
+  .trace-pane p {
+    font-size: 14px;
+    color: #231f1b;
+  }
+
+  .section {
+    padding: 22px 0;
+  }
+
+  .module {
+    border-radius: 28px;
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,.05);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .module.dark {
+    background: var(--panel);
+    color: var(--text);
+  }
+
+  .module.soft {
+    background: var(--panel-2);
+  }
+
+  .module-grid {
+    display: grid;
+    grid-template-columns: .95fr 1.05fr;
+    gap: 24px;
+    padding: 34px;
+    align-items: center;
+  }
+
+  .module-grid.reverse .copy { order: 2; }
+  .module-grid.reverse .panel-visual { order: 1; }
+
+  .copy .label {
+    font-size: 12px;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 16px;
+  }
+
+  .copy h2 {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: .98;
+    letter-spacing: -.04em;
+    margin-bottom: 16px;
+    max-width: 10ch;
+  }
+
+  .copy p {
+    max-width: 42ch;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .panel-visual {
+    min-height: 320px;
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,.06);
+    background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+    padding: 18px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .ledger {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+
+  .ledger-item {
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.06);
+    background: rgba(255,255,255,.025);
+    padding: 14px;
+  }
+
+  .ledger-item strong,
+  .stat strong {
+    display: block;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .ledger-item span,
+  .stat span {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .stat {
+    border-radius: 16px;
+    padding: 14px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.05);
+    min-height: 106px;
+  }
+
+  .quote-module {
+    padding: 26px 28px;
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .quote-block {
+    border-radius: 22px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.05);
+    padding: 28px;
+    display: grid;
+    align-content: space-between;
+    min-height: 260px;
+  }
+
+  .quote-block p {
+    font-size: clamp(1.45rem, 3vw, 2.45rem);
+    line-height: 1.08;
+    letter-spacing: -.035em;
+    max-width: 15ch;
+  }
+
+  .quote-block small,
+  .steps small {
+    color: var(--dim);
+    font-size: 13px;
+  }
+
+  .steps {
+    border-radius: 22px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.05);
+    padding: 18px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .step {
+    border-radius: 16px;
+    padding: 14px;
+    background: rgba(255,255,255,.02);
+    border: 1px solid rgba(255,255,255,.04);
+  }
+
+  .step strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  .step span {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .cta {
+    padding: 22px 0 40px;
+  }
+
+  .cta-box {
+    border-radius: 30px;
+    background: linear-gradient(180deg, #1a1a1a, #141414);
+    border: 1px solid rgba(255,255,255,.06);
+    box-shadow: var(--shadow);
+    padding: 34px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 22px;
+    align-items: center;
+  }
+
+  .cta-box h2 {
+    font-size: clamp(2.1rem, 4vw, 3.4rem);
+    line-height: .98;
+    letter-spacing: -.045em;
+    margin-bottom: 12px;
+    max-width: 10ch;
+  }
+
+  .cta-box p {
+    color: var(--muted);
+    max-width: 42ch;
+    font-size: 17px;
+  }
+
+  .cta-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .footer {
+    padding: 14px 0 28px;
+    color: var(--dim);
+    font-size: 13px;
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255,255,255,.05);
+    padding-top: 18px;
+  }
+
+  @media (max-width: 980px) {
+    .hero-grid,
+    .module-grid,
+    .quote-module,
+    .cta-box {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-grid { min-height: auto; }
+    .cta-actions { justify-content: flex-start; }
+  }
+
+  @media (max-width: 720px) {
+    .nav-inner {
+      align-items: flex-start;
+      flex-direction: column;
+      padding: 16px 0;
+    }
+
+    .hero-grid,
+    .module-grid,
+    .quote-module,
+    .cta-box { padding: 22px; }
+
+    .stats,
+    .trace-strip,
+    .mini-modules { grid-template-columns: 1fr; }
+
+    .row { grid-template-columns: 1fr; gap: 6px; }
+
+    .hero-actions,
+    .hero-notes,
+    .nav-links { gap: 10px 14px; }
+
+    h1 { max-width: 9ch; }
+  }
+</style>
+</head>
+<body>
+  <header class="site-nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#top" aria-label="Style Trace home">
+        <span class="brand-mark">ST</span>
+        <span>Style Trace</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#method">Method</a>
+        <a href="#output">Output</a>
+        <a href="#review">Review</a>
+        <a href="#start" class="quiet-link">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero-wrap">
+      <div class="container">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <div>
+                <div class="eyebrow">Evidence-first design grammar</div>
+                <h1 id="hero-title">Trace how a site is built before you try to remake it.</h1>
+                <p class="lede">
+                  Style Trace is an MCP server that opens public websites, inspects layout and interface signals,
+                  and returns a compact design grammar you can actually build against. It favors evidence over taste,
+                  structure over moodboards, and reviewable output over vague inspiration.
+                </p>
+                <div class="hero-actions">
+                  <a class="button" href="https://github.com/AgenticBridge/style-trace">Open the repository</a>
+                  <a class="button alt" href="#method">See the analysis flow</a>
+                </div>
+              </div>
+              <div class="hero-notes">
+                <span>Single MCP tool</span>
+                <span>Public URLs only</span>
+                <span>Playwright + TypeScript</span>
+              </div>
+            </div>
+
+            <div class="hero-media" aria-hidden="true">
+              <div class="trace-card">
+                <div class="trace-top">
+                  <span class="trace-url">analyze_website_style</span>
+                  <span class="pill">ten-aspect-v1</span>
+                </div>
+                <div class="mini-modules">
+                  <span>nav</span>
+                  <span>hero</span>
+                  <span>features</span>
+                  <span>proof</span>
+                  <span>footer</span>
+                </div>
+                <div class="stack">
+                  <div class="row">
+                    <strong>Hierarchy</strong>
+                    <span>Dominant first screen, compact container, visible chrome, modular pacing.</span>
+                  </div>
+                  <div class="row">
+                    <strong>Color</strong>
+                    <span>Restrained palette, dark surfaces, low contrast, one accent family.</span>
+                  </div>
+                  <div class="row">
+                    <strong>Risk</strong>
+                    <span>Avoid flattening the reference into a generic software landing page.</span>
+                  </div>
+                  <div class="row">
+                    <strong>Review</strong>
+                    <span>Keep signals legible enough for screenshot comparison on desktop and mobile.</span>
+                  </div>
+                </div>
+                <div class="pill">evidenceMode: file</div>
+              </div>
+
+              <div class="trace-strip">
+                <div class="trace-pane">
+                  <h3>Input</h3>
+                  <p>Exact public URL list with normalized validation and synthesis mode selection.</p>
+                </div>
+                <div class="trace-pane">
+                  <h3>Capture</h3>
+                  <p>Sections, headings, actions, imagery, forms, chrome, spacing, and mobile probes.</p>
+                </div>
+                <div class="trace-pane">
+                  <h3>Output</h3>
+                  <p>Design grammar, invariants, composition blueprint, risks, and review contract.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="method" class="section">
+      <div class="container">
+        <section class="module dark">
+          <div class="module-grid">
+            <div class="copy">
+              <div class="label">Method</div>
+              <h2>Capture what is on the page, not what you wish was there.</h2>
+              <p>
+                The server loads a site in a headless browser, dismisses obvious overlays, records structural
+                and stylistic signals, and segments the page into visual modules. From there it derives a shared
+                grammar that can guide regeneration, review, or design handoff without drifting into invented polish.
+              </p>
+            </div>
+            <div class="panel-visual">
+              <div class="ledger">
+                <div class="ledger-item">
+                  <strong>Browser pass</strong>
+                  <span>One context per site, desktop viewport first, then a mobile probe for responsive evidence.</span>
+                </div>
+                <div class="ledger-item">
+                  <strong>Signal extraction</strong>
+                  <span>Headings, actions, nav density, section rhythm, imagery weight, forms, and motion cues.</span>
+                </div>
+                <div class="ledger-item">
+                  <strong>Synthesis</strong>
+                  <span>Summaries stay aspect-based so hierarchy, color, layout, and interaction remain separately reviewable.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="output" class="section">
+      <div class="container">
+        <section class="module soft">
+          <div class="module-grid reverse">
+            <div class="copy">
+              <div class="label">Output</div>
+              <h2>Turn screenshots and signals into a buildable brief.</h2>
+              <p>
+                A Style Trace result does more than summarize visual taste. It tells you what must remain stable,
+                where the evidence is weaker, how modules are sequenced, and which adaptations are safe when you
+                swap in original copy, assets, and product framing.
+              </p>
+            </div>
+            <div class="panel-visual">
+              <div class="stats">
+                <div class="stat">
+                  <strong>Design grammar</strong>
+                  <span>Ten focused aspects with confidence levels and evidence paths.</span>
+                </div>
+                <div class="stat">
+                  <strong>Style invariants</strong>
+                  <span>System-level constraints that should survive regeneration.</span>
+                </div>
+                <div class="stat">
+                  <strong>Review contract</strong>
+                  <span>Must-match and must-avoid checks for screenshot review.</span>
+                </div>
+              </div>
+              <div class="ledger">
+                <div class="ledger-item">
+                  <strong>Originality boundary</strong>
+                  <span>Reuse hierarchy and spacing lessons, not brand names, protected imagery, or one-to-one composition.</span>
+                </div>
+                <div class="ledger-item">
+                  <strong>Prompt-ready brief</strong>
+                  <span>Enough guidance to direct downstream generation without collapsing into category clichés.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="review" class="section">
+      <div class="container">
+        <section class="module dark">
+          <div class="quote-module">
+            <div class="quote-block">
+              <p>
+                The useful part is not “make it feel modern.”
+                The useful part is knowing which layout, chrome, rhythm,
+                and constraint signals are carrying the identity.
+              </p>
+              <small>Built for reviewable regeneration, not decorative imitation.</small>
+            </div>
+            <div class="steps">
+              <small>Typical flow</small>
+              <div class="step">
+                <strong>1. Trace a reference</strong>
+                <span>Analyze one or more public pages and collect evidence in a local artifact.</span>
+              </div>
+              <div class="step">
+                <strong>2. Generate from constraints</strong>
+                <span>Use the grammar, blueprint, and risks as hard guidance for a new artifact.</span>
+              </div>
+              <div class="step">
+                <strong>3. Compare screenshots</strong>
+                <span>Check first-screen hierarchy, module order, CTA clarity, and drift from the reference signals.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="start" class="cta">
+      <div class="container">
+        <section class="cta-box">
+          <div>
+            <h2>Use the repo as the source, not the rumor.</h2>
+            <p>
+              Explore the current local codebase, inspect the schema and analysis pipeline, and run the MCP server
+              against a public site to see the output in context.
+            </p>
+          </div>
+          <div class="cta-actions">
+            <a class="button" href="https://github.com/AgenticBridge/style-trace">View on GitHub</a>
+            <a class="button alt" href="https://github.com/AgenticBridge/style-trace#readme">Read setup notes</a>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>@agenticbridge/style-trace</span>
+      <span>Node.js MCP server for evidence-first website style analysis</span>
+    </div>
+  </footer>
+</body>
+</html>
