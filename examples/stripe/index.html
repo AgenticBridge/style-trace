@@ -1,1 +1,958 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>StyleTrace</title><style>:root{--bg:#0a1020;--text:#e7ecff;--muted:#a8b3d8;--dark:#05070d;--purple:#7a73ff;--cyan:#2fd2ff;--pink:#ff56b3}.wrap{width:min(1240px,calc(100% - 40px));margin:0 auto}*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,sans-serif;background:radial-gradient(circle at top left,rgba(122,115,255,.35),transparent 22%),radial-gradient(circle at 85% 15%,rgba(47,210,255,.28),transparent 20%),var(--dark);color:var(--text)}.top{position:sticky;top:0;background:rgba(7,10,18,.72);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}.nav{height:60px;display:flex;align-items:center;justify-content:space-between}.links{display:flex;gap:24px;color:#ced6f6;font-size:14px}.actions{display:flex;gap:12px}.btn{padding:11px 18px;border-radius:999px;font-weight:600}.btn.primary{background:#fff;color:#171c2f}.btn.secondary{background:rgba(255,255,255,.08);color:#fff}.hero{padding:56px 0 36px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center}.hero-copy h1{margin:0;font-size:clamp(54px,8vw,96px);line-height:.95;letter-spacing:-.06em}.hero-copy p{margin:24px 0 0;max-width:32ch;color:var(--muted);font-size:21px;line-height:1.45}.hero-actions{display:flex;gap:14px;margin-top:26px}.hero-visual{min-height:560px;border-radius:36px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));box-shadow:inset 0 1px 0 rgba(255,255,255,.08);position:relative;overflow:hidden}.hero-visual:before{content:"";position:absolute;inset:-20% 25% 35% -10%;background:conic-gradient(from 180deg,var(--purple),var(--cyan),var(--pink),var(--purple));filter:blur(30px);opacity:.85}.window{position:absolute;border-radius:24px;background:rgba(10,16,32,.8);border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 80px rgba(0,0,0,.35)}.window.one{inset:58px 90px auto 36px;height:190px}.window.two{inset:212px 36px auto 120px;height:220px}.window.three{inset:auto 84px 42px 60px;height:150px}section{padding:84px 0}.eyebrow{color:#9ea9d5;font-size:14px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}.heading h2{margin:0;font-size:clamp(34px,5vw,70px);line-height:.98;letter-spacing:-.05em;max-width:900px}.heading p{margin:14px 0 0;max-width:720px;color:#9aa8d5;font-size:19px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:32px}.card{border-radius:28px;padding:28px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);min-height:260px}.card h3{margin:0 0 12px;font-size:26px;letter-spacing:-.04em}.card p{margin:0;color:#aeb8da;line-height:1.5}.metric{font-size:42px;font-weight:700;letter-spacing:-.05em;margin-bottom:10px}.panel-light{background:linear-gradient(180deg,#eef3ff,#dbe7ff);color:#18203d;border-radius:34px;padding:36px;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center}.panel-light p{color:#44507b}.bars{display:grid;gap:14px}.bar{height:18px;border-radius:999px;background:linear-gradient(90deg,var(--purple),var(--cyan))}.bar:nth-child(2){width:82%}.bar:nth-child(3){width:64%}.bar:nth-child(4){width:92%}footer{padding:44px 0 64px;color:#97a4ce;font-size:13px}.brand{font-weight:700}@media(max-width:960px){.links,.actions .secondary{display:none}.hero-grid,.panel-light,.cards{grid-template-columns:1fr}.hero-visual{min-height:420px}}</style></head><body><header class="top"><div class="wrap nav"><div class="brand">StyleTrace</div><div class="links"><span>Product</span><span>Examples</span><span>Docs</span><span>GitHub</span></div><div class="actions"><a class="btn secondary" href="https://github.com/AgenticBridge/style-trace">View repo</a><a class="btn primary" href="https://github.com/AgenticBridge/style-trace">Get started</a></div></div></header><main><section class="hero"><div class="wrap hero-grid"><div class="hero-copy"><div class="eyebrow">Design intelligence for builders</div><h1>Reference great sites. Build original ones faster.</h1><p>StyleTrace turns public URLs into compact design grammar, review contracts, and prompt-ready guidance for teams building polished product pages.</p><div class="hero-actions"><a class="btn primary" href="https://github.com/AgenticBridge/style-trace">Start with the repo</a><a class="btn secondary" href="#examples">See examples</a></div></div><div class="hero-visual"><div class="window one"></div><div class="window two"></div><div class="window three"></div></div></div></section><section id="examples"><div class="wrap heading"><div class="eyebrow">Flexible inputs</div><h2>Extract the signals that matter without flattening every reference into the same template.</h2><p>Capture hierarchy, color architecture, imagery treatment, navigation logic, and risks. Then synthesize something your team can actually design from.</p><div class="cards"><article class="card"><div class="metric">10</div><h3>Design aspects</h3><p>From visual hierarchy to responsive breakpoints, StyleTrace exposes the structure underneath the styling.</p></article><article class="card"><div class="metric">1</div><h3>Review contract</h3><p>Get a concise list of what the generated output should match and what it should clearly avoid.</p></article><article class="card"><div class="metric">0</div><h3>Hand-built moodboards</h3><p>Move directly from a URL to a synthesis brief instead of collecting screenshots and rewording visual intuition.</p></article></div></div></section><section><div class="wrap panel-light"><div><div class="eyebrow" style="color:#5565a1">Why teams use it</div><h2 style="margin:0;font-size:clamp(34px,5vw,64px);line-height:1;letter-spacing:-.05em">A style brief that is usable on day one.</h2><p style="margin-top:14px;font-size:18px;max-width:34ch">StyleTrace is designed for product teams, agencies, and prototype workflows that need reference-aware output without shipping a lookalike.</p><div class="hero-actions"><a class="btn primary" style="background:#171c2f;color:#fff" href="https://github.com/AgenticBridge/style-trace">Open GitHub</a></div></div><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div></section></main><footer><div class="wrap">Demo homepage for StyleTrace, authored from a Stripe-like style grammar with original content and visuals.</div></footer></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>StyleTrace</title>
+<style>
+  :root {
+    --bg: #0f1220;
+    --bg-soft: #171b2d;
+    --panel: #f6f3ef;
+    --panel-2: #ffffff;
+    --ink: #13233d;
+    --muted: #5f6f89;
+    --line: rgba(19, 35, 61, 0.12);
+    --white-line: rgba(255,255,255,0.09);
+    --accent: #635bff;
+    --accent-2: #ff7d45;
+    --accent-3: #8ec5ff;
+    --success: #11c26d;
+    --shadow: 0 30px 80px rgba(8, 12, 22, 0.26);
+    --radius: 22px;
+    --max: 1220px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: radial-gradient(circle at top center, #2a3150 0, #161a2b 18%, #0f1220 54%, #0d101a 100%); color: #eef2ff; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  .page {
+    overflow: hidden;
+    position: relative;
+  }
+
+  .halo,
+  .halo-2,
+  .halo-3 {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(50px);
+    pointer-events: none;
+    opacity: 0.55;
+  }
+
+  .halo { width: 420px; height: 420px; background: rgba(99,91,255,.28); top: 140px; left: -120px; }
+  .halo-2 { width: 500px; height: 500px; background: rgba(255,125,69,.18); top: 260px; right: -140px; }
+  .halo-3 { width: 340px; height: 340px; background: rgba(142,197,255,.18); top: 0; right: 15%; }
+
+  .shell { width: min(var(--max), calc(100vw - 48px)); margin: 0 auto; }
+
+  .nav-wrap {
+    padding-top: 18px;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--white-line);
+    border-radius: 18px;
+    padding: 16px 20px;
+    backdrop-filter: blur(10px);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,.95), rgba(255,255,255,.72)),
+      linear-gradient(135deg, var(--accent), var(--accent-2));
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(19,35,61,.08);
+  }
+
+  .brand-mark::before,
+  .brand-mark::after {
+    content: "";
+    position: absolute;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-radius: 99px;
+  }
+
+  .brand-mark::before { width: 17px; height: 4px; left: 8px; top: 10px; transform: rotate(-24deg); }
+  .brand-mark::after { width: 14px; height: 4px; left: 11px; top: 18px; transform: rotate(-24deg); }
+
+  .brand-copy strong {
+    display: block;
+    font-size: 14px;
+    letter-spacing: -0.02em;
+  }
+
+  .brand-copy span {
+    display: block;
+    color: rgba(238,242,255,.72);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 22px;
+    color: rgba(238,242,255,.78);
+    font-size: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    border: 1px solid transparent;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    white-space: nowrap;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+  .btn.primary {
+    background: linear-gradient(135deg, #5f55ff 0%, #6b5cff 50%, #8d68ff 100%);
+    color: white;
+    box-shadow: 0 14px 30px rgba(99,91,255,.28);
+  }
+
+  .btn.secondary {
+    background: rgba(255,255,255,0.04);
+    color: #eef2ff;
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .hero {
+    padding: 26px 0 34px;
+  }
+
+  .hero-card {
+    position: relative;
+    background: linear-gradient(180deg, rgba(246,243,239,.98), rgba(248,246,242,.98));
+    border-radius: 30px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    min-height: 760px;
+  }
+
+  .hero-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 18% 78%, rgba(99,91,255,.32), transparent 26%),
+      radial-gradient(circle at 82% 76%, rgba(255,125,69,.24), transparent 26%),
+      radial-gradient(circle at 92% 18%, rgba(142,197,255,.22), transparent 18%);
+    pointer-events: none;
+  }
+
+  .hero-top {
+    display: grid;
+    grid-template-columns: 1.08fr .88fr;
+    gap: 36px;
+    padding: 72px 72px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: rgba(19,35,61,.28);
+  }
+
+  h1, h2, h3, p { margin: 0; }
+  h1 {
+    color: var(--ink);
+    font-size: clamp(46px, 6vw, 72px);
+    line-height: .98;
+    letter-spacing: -0.055em;
+    max-width: 8.5ch;
+    font-weight: 700;
+  }
+
+  .hero-copy p {
+    margin-top: 24px;
+    max-width: 640px;
+    color: var(--muted);
+    font-size: clamp(18px, 2vw, 28px);
+    line-height: 1.42;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+
+  .hero-notes {
+    list-style: none;
+    padding: 6px 0 0;
+    margin: 0;
+    display: grid;
+    gap: 14px;
+    color: #53647e;
+    font-size: 16px;
+  }
+
+  .hero-notes li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    line-height: 1.45;
+  }
+
+  .hero-notes .dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    margin-top: 4px;
+    flex: 0 0 16px;
+    background: linear-gradient(135deg, #ffb08a, #ff7d45);
+    box-shadow: inset 0 0 0 5px rgba(255,255,255,.7);
+  }
+
+  .hero-visuals {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.2fr .88fr;
+    gap: 18px;
+    align-items: end;
+    padding: 56px 72px 72px;
+    z-index: 1;
+  }
+
+  .hero-screen,
+  .metric-stack > div,
+  .proof-card,
+  .feature-card,
+  .cta-panel,
+  .dark-panel {
+    border-radius: 20px;
+  }
+
+  .hero-screen {
+    min-height: 360px;
+    background:
+      radial-gradient(circle at 12% 92%, rgba(99,91,255,.82), rgba(99,91,255,.24) 30%, transparent 65%),
+      linear-gradient(180deg, rgba(255,255,255,.94), rgba(241,244,250,.9));
+    border: 1px solid rgba(19,35,61,.08);
+    padding: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ui-phone {
+    width: min(260px, 86%);
+    background: white;
+    border-radius: 34px;
+    padding: 22px 16px 18px;
+    box-shadow: 0 26px 40px rgba(19,35,61,.16);
+    border: 1px solid rgba(19,35,61,.07);
+  }
+
+  .ui-bar {
+    width: 72px;
+    height: 7px;
+    border-radius: 999px;
+    background: #d5ddee;
+    margin: 0 auto 18px;
+  }
+
+  .ui-thumb {
+    width: 62px;
+    height: 62px;
+    border-radius: 16px;
+    margin: 0 auto 14px;
+    background: linear-gradient(135deg, rgba(255,125,69,.32), rgba(99,91,255,.12));
+    border: 1px solid rgba(19,35,61,.06);
+  }
+
+  .ui-title,
+  .ui-line,
+  .ui-pill {
+    border-radius: 999px;
+  }
+
+  .ui-title { height: 14px; width: 56%; background: #d7deed; margin: 0 auto 10px; }
+  .ui-line { height: 10px; width: 74%; background: #edf1f8; margin: 8px auto; }
+  .ui-cta { height: 30px; border-radius: 8px; background: #111; margin-top: 16px; }
+  .ui-cta.alt { background: #11c26d; margin-top: 10px; }
+
+  .metric-stack {
+    display: grid;
+    gap: 16px;
+  }
+
+  .metric-stack > div {
+    min-height: 172px;
+    padding: 28px;
+    border: 1px solid rgba(19,35,61,.08);
+    background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,246,241,.92));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .metric-stack strong {
+    color: var(--accent-2);
+    font-size: clamp(38px, 5vw, 72px);
+    letter-spacing: -0.06em;
+    line-height: .9;
+  }
+
+  .metric-stack span {
+    color: var(--ink);
+    font-size: 20px;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-top: 14px;
+    max-width: 14ch;
+  }
+
+  .section {
+    padding: 34px 0;
+  }
+
+  .grid-two {
+    display: grid;
+    grid-template-columns: .92fr 1.08fr;
+    gap: 22px;
+  }
+
+  .dark-panel {
+    background:
+      radial-gradient(circle at top right, rgba(99,91,255,.22), transparent 30%),
+      linear-gradient(180deg, #161a2a, #111521);
+    border: 1px solid rgba(255,255,255,.08);
+    padding: 42px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dark-panel h2,
+  .dark-panel h3 {
+    font-size: clamp(34px, 4vw, 54px);
+    letter-spacing: -0.05em;
+    line-height: 1.02;
+    max-width: 9ch;
+  }
+
+  .dark-panel p {
+    color: rgba(238,242,255,.72);
+    font-size: 18px;
+    line-height: 1.55;
+    letter-spacing: -0.02em;
+    margin-top: 18px;
+    max-width: 48ch;
+  }
+
+  .mini-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .mini-kpis div {
+    border-top: 1px solid rgba(255,255,255,.1);
+    padding-top: 14px;
+  }
+
+  .mini-kpis strong {
+    display: block;
+    font-size: 28px;
+    letter-spacing: -0.05em;
+  }
+
+  .mini-kpis span {
+    display: block;
+    color: rgba(238,242,255,.68);
+    font-size: 13px;
+    line-height: 1.35;
+    margin-top: 8px;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .feature-card {
+    background: linear-gradient(180deg, rgba(250,248,245,.96), rgba(255,255,255,.92));
+    border: 1px solid rgba(19,35,61,.08);
+    padding: 28px;
+    color: var(--ink);
+    min-height: 240px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: "";
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    right: -46px;
+    top: -46px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(99,91,255,.16), transparent 70%);
+  }
+
+  .feature-num {
+    color: rgba(19,35,61,.34);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .feature-card h3 {
+    font-size: 28px;
+    line-height: 1.04;
+    letter-spacing: -0.04em;
+    margin-top: 18px;
+    max-width: 10ch;
+  }
+
+  .feature-card p {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .feature-rail {
+    margin-top: 22px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .feature-rail span {
+    height: 10px;
+    border-radius: 999px;
+    background: #e9eef7;
+  }
+
+  .feature-rail span:nth-child(1) { width: 78%; background: linear-gradient(90deg, var(--accent), #cbc9ff); }
+  .feature-rail span:nth-child(2) { width: 62%; }
+  .feature-rail span:nth-child(3) { width: 86%; background: linear-gradient(90deg, #ffd7c6, #ff955f); }
+
+  .proof-wrap {
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap: 22px;
+  }
+
+  .proof-card {
+    background: linear-gradient(180deg, rgba(247,244,240,.98), rgba(255,255,255,.93));
+    border: 1px solid rgba(19,35,61,.08);
+    padding: 38px;
+    color: var(--ink);
+    min-height: 420px;
+  }
+
+  .proof-card h2 {
+    font-size: clamp(34px, 4vw, 56px);
+    line-height: 1.02;
+    letter-spacing: -0.05em;
+    max-width: 9ch;
+  }
+
+  .proof-card p {
+    margin-top: 18px;
+    font-size: 18px;
+    line-height: 1.56;
+    color: var(--muted);
+    max-width: 42ch;
+  }
+
+  .quote-grid {
+    margin-top: 28px;
+    display: grid;
+    gap: 16px;
+  }
+
+  .quote {
+    padding: 20px 22px;
+    border-radius: 16px;
+    background: rgba(19,35,61,.03);
+    border: 1px solid rgba(19,35,61,.07);
+  }
+
+  .quote strong {
+    display: block;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .quote span {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+    line-height: 1.45;
+    font-size: 14px;
+  }
+
+  .stacked-visuals {
+    display: grid;
+    gap: 18px;
+  }
+
+  .stacked-visuals .dark-panel {
+    min-height: 200px;
+  }
+
+  .workflow {
+    margin-top: 22px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .workflow div {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .workflow b {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+  }
+
+  .workflow span {
+    color: rgba(238,242,255,.76);
+    line-height: 1.45;
+    font-size: 15px;
+    padding-top: 4px;
+  }
+
+  .comparison {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .comparison .feature-card {
+    min-height: 290px;
+  }
+
+  .comparison code,
+  .terminal code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+  }
+
+  .terminal {
+    margin-top: 24px;
+    background: rgba(8,10,18,.86);
+    border: 1px solid rgba(255,255,255,.08);
+    color: #dbe5ff;
+    border-radius: 16px;
+    padding: 18px 18px 16px;
+  }
+
+  .terminal .prompt {
+    color: #94a8d6;
+  }
+
+  .terminal .line {
+    margin-top: 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cta-panel {
+    background:
+      radial-gradient(circle at 85% 70%, rgba(255,125,69,.24), transparent 30%),
+      radial-gradient(circle at 10% 10%, rgba(99,91,255,.20), transparent 26%),
+      linear-gradient(180deg, rgba(247,244,240,.98), rgba(255,255,255,.95));
+    border: 1px solid rgba(19,35,61,.08);
+    color: var(--ink);
+    padding: 42px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .cta-panel h2 {
+    font-size: clamp(34px, 4vw, 56px);
+    letter-spacing: -0.05em;
+    line-height: 1.02;
+    max-width: 9ch;
+  }
+
+  .cta-panel p {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.55;
+    max-width: 42ch;
+  }
+
+  .cta-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .btn.ghost-light {
+    background: transparent;
+    color: var(--ink);
+    border-color: rgba(19,35,61,.12);
+  }
+
+  footer {
+    padding: 18px 0 38px;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    color: rgba(238,242,255,.62);
+    font-size: 14px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    padding-top: 18px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 1100px) {
+    .nav { flex-wrap: wrap; }
+    .hero-top,
+    .hero-visuals,
+    .grid-two,
+    .proof-wrap,
+    .cta-panel,
+    .comparison { grid-template-columns: 1fr; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .cta-actions { justify-content: flex-start; }
+  }
+
+  @media (max-width: 760px) {
+    .shell { width: min(var(--max), calc(100vw - 24px)); }
+    .nav-wrap { padding-top: 12px; }
+    .nav { padding: 14px; gap: 16px; }
+    .nav-links { display: none; }
+    .hero-card { min-height: auto; }
+    .hero-top { padding: 34px 22px 0; gap: 24px; }
+    .hero-visuals { padding: 24px 22px 22px; }
+    .dark-panel,
+    .feature-card,
+    .proof-card,
+    .cta-panel { padding: 24px; }
+    .mini-kpis,
+    .comparison { grid-template-columns: 1fr; }
+    .metric-stack > div { min-height: 150px; }
+    .footer { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="halo"></div>
+  <div class="halo-2"></div>
+  <div class="halo-3"></div>
+
+  <div class="shell nav-wrap">
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div class="brand-copy">
+          <strong>StyleTrace</strong>
+          <span>Evidence-first design grammar for MCP workflows</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#contract">Review contract</a>
+        <a href="#references">Reference inputs</a>
+        <a href="#start">Get started</a>
+      </div>
+      <div class="nav-actions">
+        <a class="btn secondary" href="#contract">See review flow</a>
+        <a class="btn primary" href="#start">Run locally</a>
+      </div>
+    </nav>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="shell">
+        <div class="hero-card">
+          <div class="hero-top">
+            <div class="hero-copy">
+              <div class="eyebrow">Style analysis for generated web work</div>
+              <h1>Turn visual references into a usable design contract.</h1>
+              <p>StyleTrace is a Node.js MCP server that inspects exact public references, extracts layout and style signals, and returns a prompt-ready brief you can build against and review against.</p>
+              <div class="hero-actions">
+                <a class="btn primary" href="#start">Analyze references</a>
+                <a class="btn ghost-light btn" href="#how">Review generated output</a>
+              </div>
+            </div>
+            <ul class="hero-notes">
+              <li><span class="dot"></span><span>Analyze only the URLs, screenshots, image assets, or bounded HTML you actually provide.</span></li>
+              <li><span class="dot"></span><span>Preserve hierarchy, spacing discipline, chrome treatment, and module rhythm instead of drifting into a generic template.</span></li>
+              <li><span class="dot"></span><span>Run generated HTML back through the same lens to surface matched invariants, violations, and drift notes.</span></li>
+              <li><span class="dot"></span><span>Keep the result concrete enough for agents, reviewers, and screenshot-based checks.</span></li>
+            </ul>
+          </div>
+
+          <div class="hero-visuals">
+            <div class="hero-screen">
+              <div class="ui-phone">
+                <div class="ui-bar"></div>
+                <div class="ui-thumb"></div>
+                <div class="ui-title"></div>
+                <div class="ui-line"></div>
+                <div class="ui-line" style="width:58%;"></div>
+                <div class="ui-cta"></div>
+                <div class="ui-cta alt"></div>
+                <div class="ui-line" style="width:84%; margin-top:18px;"></div>
+                <div class="ui-line" style="width:76%;"></div>
+                <div class="ui-line" style="width:64%;"></div>
+              </div>
+            </div>
+            <div class="metric-stack">
+              <div>
+                <strong>2 tools</strong>
+                <span>`analyze_website_style` and `review_generated_style` stay on one downstream style pipeline.</span>
+              </div>
+              <div>
+                <strong>1 brief</strong>
+                <span>Return prompt-ready guidance, invariants, risks, composition blueprints, and a review contract in one result.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="shell grid-two">
+        <div class="dark-panel">
+          <div class="eyebrow" style="color:rgba(238,242,255,.62)">How it works</div>
+          <h2>Reference in. Grammar out. Reviewable output back through the loop.</h2>
+          <p>StyleTrace visits references with Playwright, captures page structure and evidence, derives ten aspect summaries, and packages the result into fields an agent can directly consume without guessing.</p>
+          <div class="mini-kpis">
+            <div>
+              <strong>10</strong>
+              <span>design grammar aspects such as hierarchy, spacing, imagery, navigation, motion, and form treatment</span>
+            </div>
+            <div>
+              <strong>3</strong>
+              <span>evidence modes: omit, inline, or file-backed sidecar output</span>
+            </div>
+            <div>
+              <strong>1</strong>
+              <span>shared review contract for checking generated HTML or image output against the extracted constraints</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-num">Step 01</div>
+            <h3>Ingest exact references</h3>
+            <p>Accept website URLs, direct image assets, screenshots, and bounded HTML snippets without broad crawling or speculative discovery.</p>
+            <div class="feature-rail"><span></span><span></span><span></span></div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-num">Step 02</div>
+            <h3>Extract style constraints</h3>
+            <p>Capture module order, hero treatment, CTA patterns, proof structure, vocabulary, risks, and originality boundaries in one structured result.</p>
+            <div class="feature-rail"><span style="width:72%"></span><span style="width:88%"></span><span style="width:54%"></span></div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-num">Step 03</div>
+            <h3>Generate with less drift</h3>
+            <p>Use the prompt-ready brief as hard guidance so the build keeps the reference’s visual logic instead of defaulting to a category-average landing page.</p>
+            <div class="feature-rail"><span style="width:85%"></span><span style="width:61%"></span><span style="width:77%"></span></div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-num">Step 04</div>
+            <h3>Review against the contract</h3>
+            <p>Compare generated artifacts back to the same invariants and risks to make style review explicit, narrow, and screenshot-checkable.</p>
+            <div class="feature-rail"><span style="width:66%"></span><span style="width:82%"></span><span style="width:59%"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contract">
+      <div class="shell proof-wrap">
+        <div class="proof-card">
+          <div class="eyebrow">Review contract</div>
+          <h2>Make visual review concrete instead of subjective.</h2>
+          <p>The output does not stop at inspiration. It includes style invariants to preserve, risks to avoid, composition blueprints for module rhythm, and viewport checks that keep hero hierarchy and CTA clarity intact.</p>
+          <div class="quote-grid">
+            <div class="quote">
+              <strong>Must match</strong>
+              <span>Preserve first-screen hierarchy, chrome density, module pacing, imagery treatment, and color architecture as hard constraints before polishing details.</span>
+            </div>
+            <div class="quote">
+              <strong>Must avoid</strong>
+              <span>Avoid generic premium-tech flattening, unsupported motion claims, weak breakpoint assumptions, and turning every section into the same rounded card stack.</span>
+            </div>
+            <div class="quote">
+              <strong>Uncertain areas</strong>
+              <span>Low-confidence inference stays visibly low-confidence, so forms, motion, or breakpoint behavior are treated as subordinate to stronger evidence.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stacked-visuals">
+          <div class="dark-panel">
+            <div class="eyebrow" style="color:rgba(238,242,255,.62)">Shared pipeline</div>
+            <h3 style="max-width:12ch;">One downstream flow for both extraction and review.</h3>
+            <div class="workflow">
+              <div><b>1</b><span>Run `analyze_website_style` on your chosen references.</span></div>
+              <div><b>2</b><span>Pass the result into your generation prompt as a style contract.</span></div>
+              <div><b>3</b><span>Run `review_generated_style` on the generated HTML or image output.</span></div>
+            </div>
+          </div>
+          <div class="dark-panel">
+            <div class="eyebrow" style="color:rgba(238,242,255,.62)">Screenshot-reviewable</div>
+            <h3 style="max-width:11ch;">Built for real side-by-side artifact checks.</h3>
+            <div class="terminal">
+              <div class="line"><code><span class="prompt">$</span> npm run typecheck</code></div>
+              <div class="line"><code><span class="prompt">$</span> npm run build</code></div>
+              <div class="line"><code><span class="prompt">$</span> npm test</code></div>
+              <div class="line"><code><span class="prompt">$</span> npm run test:e2e -- --instance figma-framer-webflow</code></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="references">
+      <div class="shell">
+        <div class="dark-panel" style="margin-bottom:22px;">
+          <div class="eyebrow" style="color:rgba(238,242,255,.62)">Reference inputs</div>
+          <h2 style="max-width:11ch;">Use live pages, image references, screenshots, or bounded HTML.</h2>
+          <p>Keep scope narrow. The system analyzes exactly what you point it at, which keeps the result auditable and makes downstream review easier to trust.</p>
+        </div>
+
+        <div class="comparison">
+          <div class="feature-card">
+            <div class="feature-num">URLs</div>
+            <h3>Public website references</h3>
+            <p>Use exact public pages when hierarchy, navigation, and responsive behavior matter most.</p>
+            <div class="terminal" style="margin-top:20px;">
+              <div class="line"><code>{</code></div>
+              <div class="line"><code>&nbsp;&nbsp;"urls": ["https://www.apple.com"]</code></div>
+              <div class="line"><code>}</code></div>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-num">Mixed inputs</div>
+            <h3>Blend sources without widening scope</h3>
+            <p>Pair screenshots, direct image assets, and small HTML fragments when a browsing session is not the only source of truth.</p>
+            <div class="terminal" style="margin-top:20px;">
+              <div class="line"><code>"type": "image" | "screenshot" | "html"</code></div>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-num">Output</div>
+            <h3>Prompt-ready design brief</h3>
+            <p>Return `visualVocabulary`, `styleInvariants`, `styleRisks`, `compositionBlueprint`, `promptReadyBrief`, and the `reviewContract` in one result.</p>
+            <div class="terminal" style="margin-top:20px;">
+              <div class="line"><code>"evidenceMode": "omit" | "inline" | "file"</code></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="start">
+      <div class="shell">
+        <div class="cta-panel">
+          <div>
+            <div class="eyebrow">Get started</div>
+            <h2>Run StyleTrace locally and keep generation tied to evidence.</h2>
+            <p>Install the package or run from a local clone, point it at public references, then use the result as a strict brief for generation and as a contract for review.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn primary" href="https://github.com/AgenticBridge/style-trace">Open repository</a>
+            <a class="btn ghost-light btn" href="https://github.com/AgenticBridge/style-trace#readme">Read setup</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer">
+      <div>Node.js MCP server for evidence-first website style analysis and review.</div>
+      <div class="footer-links">
+        <a href="https://github.com/AgenticBridge/style-trace">GitHub</a>
+        <a href="https://github.com/AgenticBridge/style-trace/issues">Issues</a>
+        <a href="https://github.com/AgenticBridge/style-trace#readme">Docs</a>
+      </div>
+    </div>
+  </footer>
+</div>
+</body>
+</html>

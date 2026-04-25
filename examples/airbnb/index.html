@@ -1,1 +1,502 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>StyleTrace</title><style>:root{--bg:#ffffff;--text:#222222;--muted:#6a6a6a;--line:#ebebeb;--soft:#f7f7f7;--accent:#ff385c}*{box-sizing:border-box}body{margin:0;font-family:Circular,ui-sans-serif,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}.wrap{width:min(1120px,calc(100% - 32px));margin:0 auto}.top{position:sticky;top:0;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}.nav{height:74px;display:flex;align-items:center;justify-content:space-between}.logo{font-weight:700;color:var(--accent);font-size:22px}.navlinks{display:flex;gap:26px;color:#555;font-size:14px}.cta{padding:12px 18px;border-radius:999px;border:1px solid #ddd;background:#fff;font-weight:600}.hero{padding:28px 0}.hero-box{border:1px solid var(--line);border-radius:32px;padding:24px;background:#fff;box-shadow:0 8px 30px rgba(0,0,0,.04)}.hero-grid{display:grid;grid-template-columns:1fr .95fr;gap:28px;align-items:center}.hero h1{margin:0;font-size:clamp(44px,6vw,78px);line-height:.97;letter-spacing:-.05em;max-width:10ch}.hero p{margin:18px 0 0;color:var(--muted);font-size:19px;max-width:34ch;line-height:1.5}.search-pill{margin-top:28px;display:inline-flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--line);border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.05)}.search-pill button{border:none;background:var(--accent);color:#fff;padding:11px 16px;border-radius:999px;font-weight:700}.visual{border-radius:28px;min-height:420px;background:linear-gradient(135deg,#f4f4f4,#ececec);display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:16px}.tile{background:#fff;border-radius:22px;border:1px solid #efefef;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;min-height:180px}.tile strong{font-size:18px;letter-spacing:-.03em}.tile span{color:var(--muted);font-size:14px;margin-top:6px}section{padding:52px 0}.heading h2{margin:0;font-size:clamp(30px,4vw,52px);letter-spacing:-.04em;line-height:1.03}.heading p{margin:12px 0 0;max-width:700px;color:var(--muted);font-size:18px}.list{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}.item{border:1px solid var(--line);border-radius:24px;padding:22px;background:#fff}.item h3{margin:0 0 10px;font-size:22px;letter-spacing:-.03em}.item p{margin:0;color:var(--muted);line-height:1.5}.soft{background:var(--soft);border-radius:30px;padding:28px}.softgrid{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:start}.mini{display:grid;gap:14px}.quote{padding:18px;border-radius:18px;background:#fff;border:1px solid var(--line);color:#444}footer{padding:40px 0 60px;color:#777;border-top:1px solid var(--line);font-size:13px}@media(max-width:920px){.navlinks{display:none}.hero-grid,.list,.softgrid{grid-template-columns:1fr}}</style></head><body><header class="top"><div class="wrap nav"><div class="logo">StyleTrace</div><div class="navlinks"><span>Overview</span><span>Examples</span><span>How it works</span><span>GitHub</span></div><a class="cta" href="https://github.com/AgenticBridge/style-trace">Open repo</a></div></header><main><section class="hero"><div class="wrap hero-box"><div class="hero-grid"><div><h1>Borrow the taste. Keep the originality.</h1><p>StyleTrace helps teams study the design grammar of public websites and turn that evidence into practical prompts, review rules, and synthesis guidance.</p><div class="search-pill"><span>Reference a website</span><button>Trace style</button></div></div><div class="visual"><div class="tile"><strong>Color architecture</strong><span>Palette, contrast, restraint</span></div><div class="tile"><strong>Visual hierarchy</strong><span>Hero, chrome, layout pressure</span></div><div class="tile"><strong>Imagery treatment</strong><span>Media role, iconography, motifs</span></div><div class="tile"><strong>Review contract</strong><span>What to match, what to avoid</span></div></div></div></div></section><section><div class="wrap heading"><h2>A softer, simpler way to compare design references.</h2><p>Instead of manually collecting screenshots and describing them from scratch, StyleTrace turns a public page into a compact brief you can build from immediately.</p><div class="list"><article class="item"><h3>Readable outputs</h3><p>Get summaries that describe structure, mood, density, CTA behavior, and risks in plain language.</p></article><article class="item"><h3>Originality boundaries</h3><p>Keep the useful design signals while avoiding direct copying of logos, copy, and proprietary imagery.</p></article><article class="item"><h3>Fast iteration</h3><p>Use the resulting brief to generate HTML experiments, comparison boards, or internal design spikes.</p></article></div></div></section><section><div class="wrap soft"><div class="softgrid"><div><div class="heading"><h2>Built for teams exploring style with intent.</h2><p>Ideal for agencies, product designers, and prototyping workflows that want reference-aware output without a lookalike result.</p></div></div><div class="mini"><div class="quote">“StyleTrace feels like the missing bridge between moodboards and something a builder can actually ship.”</div><div class="quote">“It captures what makes a page feel the way it does, not just what is on the screen.”</div></div></div></div></section></main><footer><div class="wrap">Demo homepage for StyleTrace, shaped by an Airbnb-like restrained editorial grammar with original project copy.</div></footer></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@agenticbridge/style-trace</title>
+  <meta name="description" content="StyleTrace is an MCP server that analyzes public websites and extracts an evidence-first design grammar for faithful, original reinterpretation.">
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --bg-soft: #fbf9f4;
+      --text: #181512;
+      --muted: #6d655d;
+      --line: rgba(24, 21, 18, 0.16);
+      --line-strong: rgba(24, 21, 18, 0.3);
+      --accent: #181512;
+      --max: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", Times, serif;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.14em; }
+    img { max-width: 100%; display: block; }
+
+    .shell {
+      width: min(calc(100% - 48px), var(--max));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(247, 244, 238, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(24, 21, 18, 0.07);
+    }
+
+    .nav {
+      min-height: 88px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      font-size: 0.98rem;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-links,
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .nav-links { justify-content: center; }
+    .nav-cta { justify-content: flex-end; }
+
+    .nav-cta a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--line-strong);
+      padding-bottom: 1px;
+    }
+
+    .hero {
+      padding: 72px 0 44px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.9fr);
+      gap: 36px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      font-size: 0.94rem;
+      color: var(--muted);
+      margin: 0 0 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.7rem, 6.4vw, 5.8rem);
+      line-height: 0.95;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      max-width: 11ch;
+    }
+
+    .hero-copy {
+      margin-top: 20px;
+      max-width: 34rem;
+      font-size: 1.1rem;
+      color: rgba(24, 21, 18, 0.88);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 28px;
+      font-size: 1rem;
+    }
+
+    .hero-actions a {
+      text-decoration: none;
+      border-bottom: 1px solid var(--line-strong);
+      padding-bottom: 2px;
+    }
+
+    .hero-note {
+      padding-top: 16px;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .quiet-panel {
+      border-left: 1px solid var(--line);
+      padding-left: 24px;
+      color: var(--text);
+    }
+
+    .quiet-panel p {
+      margin: 0 0 14px;
+      font-size: 0.98rem;
+      color: var(--muted);
+    }
+
+    .signal-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .signal-list li {
+      display: grid;
+      grid-template-columns: 104px 1fr;
+      gap: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      font-size: 0.98rem;
+    }
+
+    .signal-list strong {
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    section {
+      padding: 42px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .section-label {
+      font-size: 0.95rem;
+      color: var(--muted);
+      position: relative;
+      top: 2px;
+    }
+
+    .section-body h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 3.7vw, 3rem);
+      line-height: 1;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      max-width: 12ch;
+    }
+
+    .section-body p.lead {
+      margin: 0;
+      max-width: 42rem;
+      font-size: 1.08rem;
+      color: rgba(24, 21, 18, 0.88);
+    }
+
+    .editorial-list {
+      margin: 26px 0 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--line);
+    }
+
+    .editorial-list li {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+      gap: 22px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .editorial-list h3 {
+      margin: 0;
+      font-size: 1.16rem;
+      font-weight: 500;
+    }
+
+    .editorial-list p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.99rem;
+    }
+
+    .two-col-text {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .two-col-text p {
+      margin: 0;
+      color: rgba(24, 21, 18, 0.88);
+      font-size: 1rem;
+    }
+
+    .cta-band {
+      padding: 46px 0 64px;
+    }
+
+    .cta-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) auto;
+      gap: 24px;
+      align-items: end;
+      border-top: 1px solid var(--line-strong);
+      padding-top: 20px;
+    }
+
+    .cta-row h2 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4.4vw, 3.4rem);
+      line-height: 1;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      max-width: 13ch;
+    }
+
+    .cta-row p {
+      margin: 0;
+      max-width: 34rem;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    .cta-link {
+      align-self: center;
+      white-space: nowrap;
+      text-decoration: none;
+      border-bottom: 1px solid var(--line-strong);
+      padding-bottom: 2px;
+      font-size: 1rem;
+    }
+
+    footer {
+      padding: 22px 0 34px;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .footer-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .section-grid,
+      .editorial-list li,
+      .cta-row,
+      .footer-row,
+      .two-col-text {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        grid-template-columns: 1fr auto;
+        row-gap: 10px;
+        padding: 16px 0;
+        min-height: auto;
+      }
+
+      .nav-links {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+        gap: 16px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .nav-cta {
+        justify-content: flex-end;
+      }
+
+      .quiet-panel {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        padding-left: 0;
+        padding-top: 18px;
+      }
+
+      .hero {
+        padding-top: 44px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(calc(100% - 28px), var(--max));
+      }
+
+      h1 {
+        max-width: 9ch;
+      }
+
+      .hero-copy,
+      .section-body p.lead {
+        font-size: 1rem;
+      }
+
+      .signal-list li {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="#top">@agenticbridge/style-trace</a>
+        <div class="nav-links">
+          <a href="#approach">Approach</a>
+          <a href="#output">Output</a>
+          <a href="#fit">Why it holds up</a>
+        </div>
+        <div class="nav-cta">
+          <a href="https://github.com/AgenticBridge/style-trace">View repository</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="shell">
+        <div class="hero-grid">
+          <div>
+            <p class="eyebrow">Evidence-first website style analysis for MCP workflows</p>
+            <h1>Read a website’s design grammar before you try to rebuild it.</h1>
+            <p class="hero-copy">
+              StyleTrace is a Node.js MCP server that opens public pages in Playwright, captures visual structure, and returns a compact grammar for hierarchy, spacing, navigation, imagery, and component treatment. It is built for original reinterpretation, not brand mimicry.
+            </p>
+            <div class="hero-actions">
+              <a href="https://github.com/AgenticBridge/style-trace">Read the code</a>
+              <a href="#output">Inspect the output model</a>
+            </div>
+            <div class="hero-note">One tool. Public URLs only. Structured output designed for screenshot review.</div>
+          </div>
+
+          <aside class="quiet-panel" aria-label="Key signals">
+            <p>What the server actually extracts</p>
+            <ul class="signal-list">
+              <li><strong>Structure</strong><span>Visual modules, section rhythm, navigation footprint, footer behavior.</span></li>
+              <li><strong>Style</strong><span>Typography scale, contrast discipline, spacing density, component weight.</span></li>
+              <li><strong>Evidence</strong><span>Observed signals, confidence markers, and optional capture paths for auditability.</span></li>
+              <li><strong>Synthesis</strong><span>A prompt-ready brief for building a new page without lifting branded assets or copy.</span></li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="approach">
+      <div class="shell section-grid">
+        <div class="section-label">Approach</div>
+        <div class="section-body">
+          <h2>Capture first. Infer second. Preserve only what the page actually proves.</h2>
+          <p class="lead">
+            The pipeline stays narrow on purpose: validate exact public URLs, open them in an isolated browser context, capture structural and stylistic signals, segment the page into modules, and synthesize a design grammar that stays closer to evidence than taste.
+          </p>
+          <ul class="editorial-list">
+            <li>
+              <h3>Browser-level inspection</h3>
+              <p>Pages load in headless Chromium with desktop and mobile probing, so hierarchy and responsive behavior are derived from rendered output rather than source guesses.</p>
+            </li>
+            <li>
+              <h3>Module-aware analysis</h3>
+              <p>Sections are turned into ordered visual modules such as navigation, hero, proof, pricing, content, and footer, preserving rhythm and emphasis instead of flattening everything into a summary sentence.</p>
+            </li>
+            <li>
+              <h3>Ten-aspect grammar</h3>
+              <p>Output covers hierarchy, typography, color, spacing, imagery, states, navigation, motion, forms, and breakpoints, with confidence levels that keep weaker inferences from acting like hard facts.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="output">
+      <div class="shell section-grid">
+        <div class="section-label">Output</div>
+        <div class="section-body">
+          <h2>A design brief that downstream tools can use without inventing the rest.</h2>
+          <p class="lead">
+            StyleTrace returns structured JSON for single-site profiling or cross-site commonality. The result is meant to guide reconstruction and review: what must remain faithful, what should stay original, and where the model should stay cautious.
+          </p>
+          <div class="two-col-text">
+            <p>
+              The server can keep evidence out of the public payload, inline it directly, or write it to a sidecar artifact. This makes it usable in tighter prompt contexts while still supporting audit trails when a generation needs to be checked against source material.
+            </p>
+            <p>
+              The synthesis layer produces style invariants, style risks, composition blueprints, and prompt-ready guidance. That keeps a redesign anchored to real composition signals instead of sliding toward a generic startup landing page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="fit">
+      <div class="shell section-grid">
+        <div class="section-label">Why it holds up</div>
+        <div class="section-body">
+          <h2>Useful when fidelity matters, especially when “similar” is too vague.</h2>
+          <p class="lead">
+            A homepage can borrow pacing, density, and composition without borrowing identity. StyleTrace is for that boundary: enough specificity to preserve the reference’s visual logic, enough restraint to avoid copying the reference itself.
+          </p>
+          <ul class="editorial-list">
+            <li>
+              <h3>For regeneration reviews</h3>
+              <p>Compare a generated page against captured hierarchy, navigation density, and module order with explicit rules about what must match and what must not be invented.</p>
+            </li>
+            <li>
+              <h3>For design system research</h3>
+              <p>Use the extracted vocabulary to understand how public product sites organize emphasis, spacing, and interfaces across real pages instead of abstract style labels.</p>
+            </li>
+            <li>
+              <h3>For original builds</h3>
+              <p>Keep branded copy, logos, imagery, and protected expression out of scope while still translating the reference into a practical build brief for a new artifact.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="shell">
+        <div class="cta-row">
+          <div>
+            <h2>Start from the repository, then run the analyzer on a public URL.</h2>
+            <p>
+              The project is a focused MCP server with a single tool, TypeScript source, Playwright capture, and tests for validation, analysis, and synthesis. Use it when you need design evidence that can survive screenshot review.
+            </p>
+          </div>
+          <a class="cta-link" href="https://github.com/AgenticBridge/style-trace">Open StyleTrace on GitHub</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-row">
+      <div>StyleTrace analyzes public marketing pages and extracts a compact, evidence-first design grammar.</div>
+      <div><a href="https://github.com/AgenticBridge/style-trace">Repository</a></div>
+    </div>
+  </footer>
+</body>
+</html>
